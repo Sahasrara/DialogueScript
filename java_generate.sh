@@ -15,7 +15,7 @@ cat > $TEST_FILE <<- EOM
 #/bin/bash
 OUTPUT_DIR="generated_java"
 CLASSPATH=".:./antlr/antlr-4.10.1-complete.jar:./$OUTPUT_DIR"
-java -cp \$CLASSPATH org.antlr.v4.gui.TestRig DialogueScript script -gui example.ds
+java -cp \$CLASSPATH org.antlr.v4.gui.TestRig DialogueScript script -gui example_script.ds
 EOM
 chmod +x $TEST_FILE
 

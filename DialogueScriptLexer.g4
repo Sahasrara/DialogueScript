@@ -1,4 +1,5 @@
-lexer grammar DialogueScriptLexer;
+lexer grammar DialogueScriptLexer
+    ;
 
 // Keywords
 TYPE_BOOLEAN: 'bool';
@@ -26,11 +27,12 @@ ELSE: 'else';
 SWITCH: 'switch';
 
 // Integer Literals
-INTEGER_LITERAL:
-	DecIntegerLiteral
-	| HexIntegerLiteral
-	| OctalIntegerLiteral
-	| BinaryIntegerLiteral;
+INTEGER_LITERAL
+    : DecIntegerLiteral
+    | HexIntegerLiteral
+    | OctalIntegerLiteral
+    | BinaryIntegerLiteral
+    ;
 
 fragment DecIntegerLiteral: '0' | NonZeroDigit Digit*;
 fragment HexIntegerLiteral: '0' [xX] HexDigit+;
@@ -40,31 +42,34 @@ fragment BinaryIntegerLiteral: '0' [bB] BinaryDigit+;
 // Floating-Point Literals
 FLOATING_POINT_LITERAL: DecFloatingPointLiteral;
 
-fragment DecFloatingPointLiteral:
-	DecIntegerLiteral? ('.' Digits) FloatTypeSuffix?
-	| DecIntegerLiteral FloatTypeSuffix?;
+fragment DecFloatingPointLiteral
+    : DecIntegerLiteral? ('.' Digits) FloatTypeSuffix?
+    | DecIntegerLiteral FloatTypeSuffix?
+    ;
 
 // Boolean Literals
 BOOLEAN_LITERAL: 'true' | 'false';
 
 // Character Literals
-CHARACTER_LITERAL:
-	'\'' SingleCharacter '\''
-	| '\'' EscapeSequence '\'';
+CHARACTER_LITERAL
+    : '\'' SingleCharacter '\''
+    | '\'' EscapeSequence '\''
+    ;
 
 fragment SingleCharacter: ~['\\\r\n];
-fragment EscapeSequence:
-	'\\\''
-	| '\\"'
-	| '\\\\'
-	| '\\0'
-	| '\\a'
-	| '\\b'
-	| '\\f'
-	| '\\n'
-	| '\\r'
-	| '\\t'
-	| '\\v';
+fragment EscapeSequence
+    : '\\\''
+    | '\\"'
+    | '\\\\'
+    | '\\0'
+    | '\\a'
+    | '\\b'
+    | '\\f'
+    | '\\n'
+    | '\\r'
+    | '\\t'
+    | '\\v'
+    ;
 
 // String Literals
 STRING_LITERAL: '"' StringCharacters? '"';
@@ -129,7 +134,7 @@ DIV: '/';
 MOD: '%';
 CONCAT: '..';
 
-TURNARY: '?';
+TERNARY: '?';
 
 // Identifiers
 /* Order affects precedence IDENTFIER must come last. */

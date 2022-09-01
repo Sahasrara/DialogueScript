@@ -46,5 +46,17 @@
 // Scheduled Block 4
 <Flag4<
 	bool WeDidIt = true;
-	// TODO: add in a switch here
+	// This is meant to test out operator precedence 
+	if (a = b ? c : d || e && f | g ^ h & i == j > k >> l + m * n .. o[1]()++)
+	{
+		switch (test)
+		{
+			case a:
+				test();
+				break;
+			default:
+				test();
+				break;
+		}
+	}
 >>

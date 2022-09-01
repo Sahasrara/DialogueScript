@@ -1,0 +1,50 @@
+// this is a comment
+/* this is also a comment */
+
+// Scheduled Block 0
+<<timedMethod{5};>Flag1>
+
+// Scheduled Block 1
+<<anotherTimedMethod{5};>Flag2>
+
+// Scheduled Block 2
+<Flag1,Flag2<
+	int int16VarDefault = 1;
+	int8 int8Var = 2;
+	int16 int16Var = 3;
+	int32 int32Var = 4;
+	int64 int64Var = 5;
+	uint uint16VarDefault = 6;
+	uint8 uint8Var = 7;
+	uint16 uint16Var = 8;
+	uint32 uint32Var = 9;
+	uint64 uint64Var = 10;
+	char charVar = 'c';
+	float float32VarDefault = 12F;
+	float32 float32Var = 13f;
+	float64 float64Var = 16d;
+	string stringVar = "string literal with \\ escapes \n";
+	bool boolVar = true || false;
+	bool[] arrayVar = namespace::thing.boolArray;
+	namespace::randomGenericType<uint, namespace::someType> 
+		generic_type_variable_with_underscores = namespace::instanceOfRandomGenericType;
+	AMapOfSomeSort<string, int> aMap = namespace::instanceOfAMapOfSomeSort;
+
+	if (uint16Var == 10 && globalFunction() || "string literal without escapes" .. "concat string" == stringVar) 
+	{
+		generic_type_variable_with_underscores.someFunction();
+	}
+	int timedMethodReturnValue = namespace::nestedNamespace::someClass.timedMethodThatReturnsAnInt{};
+	bool aBool = arrayVar[10]; 
+	string valueFromMap = aMap["key"];
+	namespace::type untimedFunctionReturnValue = untimedFunction();
+>Flag3>
+
+// Scheduled Block 3
+<Flag3<>Flag4>
+
+// Scheduled Block 4
+<Flag4<
+	bool WeDidIt = true;
+	// TODO: add in a switch here
+>>

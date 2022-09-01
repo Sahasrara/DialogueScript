@@ -1,6 +1,6 @@
 # DialogueScript
 
-## What it is?
+## What is DialogueScript? 
 DialogueScript is a domain-specific language designed for use in graph-based dialogue systems (cutscenes, conditions, state change, etc.).
 
 It is meant to be translated directly into C# or C++ for use with Unity or Unreal Engine based games.

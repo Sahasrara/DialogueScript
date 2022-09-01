@@ -1,13 +1,33 @@
 # DialogueScript
-
 ## What is DialogueScript? 
-DialogueScript is a domain-specific language designed for use in graph-based dialogue systems (cutscenes, conditions, state change, etc.).
+```
+<<>>
+<<
+    int x = 10;
+    if (x == 10)
+    {
+        string stringVariable = "string" .. "concat";
+        CallFunction(stringVariable);
+    } 
+    else 
+    {
+        namespace::SomeObject.CallAnotherFunction(10, "string literal");
+    }
+>Flag1,Flag2>
+<Flag1,Flag2<
+    string stringReturnValue = AnAsyncFunction{1, "string arg"};
+    System::Println(stringReturnValue);
+>Flag3>
+<Flag3<
+    System::Println("AnAsyncFunction called its callback! We made it!");
+>>
+```
 
-It is meant to be translated directly into C# or C++ for use with Unity or Unreal Engine based games.
+DialogueScript is a domain-specific language designed for use in graph-based dialogue systems (cutscenes, conditions, state change, etc.). It is meant to be translated directly into C# or C++ for use with Unity or Unreal Engine based games.
 
 This repository contains the DialogueScript language specification in the form of two .g4 files which are used by [ANTLR](https://www.antlr.org/) to generate a lexer and a parser.
 
-DialogueScript is not meant to be a general purpose programming language. There are no loops, no type definitions, no function defintions, and there is no direct memory allocation. These scripts are purely for interacting with code already defined in your game.
+DialogueScript is not meant to be a general purpose programming language. There are no loops, no type definitions, no function defintions, and there is no direct memory allocation. These scripts are meant to interacting with code thats already defined in your game. That's where the heavy lifting should go.
 
 ## Quick Start
 * Install Java 1.6 or higher.
@@ -16,9 +36,9 @@ DialogueScript is not meant to be a general purpose programming language. There 
 
 This will generate a lexer and a parser both written in Java as well as file called `test.sh`. `test.sh` is a shell script that will parse the provided `example_script.ds` DialogueScript file and start a GUI to display the resulting parse tree.
 
-Below is an annotated example script to expose you to some of the core concepts of DialogueScript. For a more complete overview, please see `example_script.ds`.
+Below is an annotated veresion of the DialogueScript at the top of the page. If you're still hungry for more examples, check out: `example_script.ds`.
 
-## Example Code
+## Annotated Example Code
 ```
 // A DialogueScript script is made up of a sequence of "scheduled blocks". 
 // Scheduled blocks are just like the blocks that exist in C-family languages.
@@ -91,3 +111,5 @@ Below is an annotated example script to expose you to some of the core concepts 
     System::Println("AnAsyncFunction called its callback! We made it!");
 >>
 ```
+
+

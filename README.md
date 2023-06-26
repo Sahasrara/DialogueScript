@@ -30,20 +30,30 @@ This repository contains the DialogueScript language specification in the form o
 DialogueScript is not meant to be a general purpose programming language. There are no loops, no type definitions, no function defintions, and there is no direct memory allocation. These scripts are meant to interacting with code thats already defined in your game. That's where the heavy lifting should go.
 
 ## Quick Start
-* Install Java 1.6 or higher.
-* Checkout this repo.
-* Run `java_generate.sh`
+* Install antlr4-tools following [these directions.](https://github.com/antlr/antlr4/blob/master/doc/getting-started.md)
+* Run the following command to generate a DialogueScript lexer and parser written in Java:
+```
+antlr4 ./grammar/DialogueScriptLexer.g4 ./grammar/DialogueScriptParser.g4 -o java/generated
+```
+You can also generate lexers and parsers for any of ANTLR's supported target languages (Ex: C#, Java, Python, JavaScript, etc.). Here's an example for C#:
+```
+antlr4 -Dlanguage=CSharp ./grammar/DialogueScriptLexer.g4 ./grammar/DialogueScriptParser.g4 -o csharp/generated
+```
 
-This will generate a lexer and a parser both written in Java as well as file called `test.sh`. `test.sh` is a shell script that will parse the provided `example_script.ds` DialogueScript file and start a GUI to display the resulting parse tree.
+From here, you would have to write your own listener or visitor using the generated lexer and parser. This respository will (or already does) contain a listener for csharp (which could be used for Unity projects).
 
-Below is an annotated veresion of the DialogueScript at the top of the page. If you're still hungry for more examples, check out: `example_script.ds`.
+## Examining a Parse Tree
+Run the following to view a graphical representation of the parse tree generated from the included example script (example_script.ds):
+```
+antlr4-parse ./grammar/DialogueScriptLexer.g4 ./grammar/DialogueScriptParser.g4 script example_script.ds -gui
+```
 
 ## Annotated Example Code
 ```
 // A DialogueScript script is made up of a sequence of "scheduled blocks". 
 // Scheduled blocks are just like the blocks that exist in C-family languages.
 // Example: 
-// { /*code goes here*/ }
+// << /*code goes here*/ >>
 //
 // The only difference is that each scheduled block and wait for zero or more
 // "flags" to be set before executing. They can also set flags immediatly after

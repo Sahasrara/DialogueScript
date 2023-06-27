@@ -12,7 +12,7 @@ namespace DialogueScript.Editor
         public static void GenerateTestScript()
         {
             // Read test file and generate C# from DialogueScript
-            string testDirectory = Path.Combine(Application.dataPath, "DialogueScript", "Editor");
+            string testDirectory = Path.Combine(Application.dataPath, "DialogueScript");
             string testFilePath = Path.Combine(testDirectory, "TestScript.ds");
             if (!File.Exists(testFilePath)) Debug.LogError("Could not find test_script.ds");
             string testFileString = File.ReadAllText(testFilePath);
@@ -24,15 +24,16 @@ namespace DialogueScript.Editor
             DialogueScriptParser parser = new(tokens)
             {
                 BuildParseTree = true,
+                ErrorHandler = new BailErrorStrategy(),
             };
             IParseTree tree = parser.script();
 
             // Visit the Tree
-            DialogueScriptListenerTranspiler listenerTranspiler = new("DialogueScripTest");
+            DialogueScriptListenerTranspiler listenerTranspiler = new("TestNamespace", "TestClass");
             ParseTreeWalker.Default.Walk(listenerTranspiler, tree);
 
             // Create New Script
-            string testScriptPath = Path.Combine(testDirectory, "TestScript.cs");
+            string testScriptPath = Path.Combine(testDirectory, "Generated", "TestScript.cs");
             string dialogueScript = listenerTranspiler.ToString();
             File.WriteAllText(testScriptPath, dialogueScript);
             AssetDatabase.Refresh();

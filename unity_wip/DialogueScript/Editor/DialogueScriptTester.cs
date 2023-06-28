@@ -11,11 +11,34 @@ namespace DialogueScript.Editor
         [MenuItem("DialogueScript/Generate Test Script")]
         public static void GenerateTestScript()
         {
-            // Read test file and generate C# from DialogueScript
+            // Class and namespace name
+            string testNamespaceName = "TestNamespace";
+            string testClassName = "TestClass";
+
+            // Grab file paths
             string testDirectory = Path.Combine(Application.dataPath, "DialogueScript");
             string testFilePath = Path.Combine(testDirectory, "TestScript.ds");
+            string testScriptPath = Path.Combine(testDirectory, "Generated", "TestScript.cs");
             if (!File.Exists(testFilePath)) Debug.LogError("Could not find test_script.ds");
-            string testFileString = File.ReadAllText(testFilePath);
+
+            // Generate script
+            GenerateScript(testFilePath, testScriptPath, testNamespaceName, testClassName, 0);
+        }
+
+        [MenuItem("DialogueScript/Execute Test Script")]
+        public static void ExecuteTestScript()
+        {
+            // Initialize Lookup Table
+            ScriptLookupTable.Initialize();
+
+            // TODO - Execute a test script
+        }
+
+        private static void GenerateScript(string dialogueScriptSourcePath, string generatedCodePath,
+            string namespaceName, string className, int scriptId)
+        {
+            // Read test file and generate C# from DialogueScript
+            string testFileString = File.ReadAllText(dialogueScriptSourcePath);
 
             // Generate DialogueScript Parse Tree
             ICharStream stream = CharStreams.fromString(testFileString);
@@ -29,20 +52,13 @@ namespace DialogueScript.Editor
             IParseTree tree = parser.script();
 
             // Visit the Tree
-            DialogueScriptListenerTranspiler listenerTranspiler = new("TestNamespace", "TestClass");
-            ParseTreeWalker.Default.Walk(listenerTranspiler, tree);
+            TranspilerListener listener = new(namespaceName, className, scriptId);
+            ParseTreeWalker.Default.Walk(listener, tree);
 
             // Create New Script
-            string testScriptPath = Path.Combine(testDirectory, "Generated", "TestScript.cs");
-            string dialogueScript = listenerTranspiler.ToString();
-            File.WriteAllText(testScriptPath, dialogueScript);
+            string dialogueScript = listener.ToString();
+            File.WriteAllText(generatedCodePath, dialogueScript);
             AssetDatabase.Refresh();
-        }
-
-        [MenuItem("DialogueScript/Execute Test Script")]
-        public static void ExecuteTestScript()
-        {
-            // TODO
         }
     }
 }

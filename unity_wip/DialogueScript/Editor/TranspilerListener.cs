@@ -7,16 +7,19 @@ using Microsoft.CodeAnalysis.CSharp;
 
 namespace DialogueScript
 {
-    public class DialogueScriptListenerTranspiler : DialogueScriptParserBaseListener
+    public class TranspilerListener : DialogueScriptParserBaseListener
     {
+        #region Constants
+        private const string k_BlockNamePrefix = "Block";
+        #endregion
+
         #region Private Variables
+        private int m_ScriptId;
         private string m_Namespace;
-        private string m_ClassName;
+        private string m_ScriptName;
 
         // Accumulator - Script
         private StringBuilder m_AccumulatorScript;
-        // Accumulator - Scheduled Block
-        private StringBuilder m_AccumulatorScheduledBlock;
 
         private List<string> m_FlagList;
         private Dictionary<string, int> m_FlagMap;
@@ -24,11 +27,10 @@ namespace DialogueScript
         #endregion
 
         #region Constructor
-        public DialogueScriptListenerTranspiler(string namespaceString, string className)
+        public TranspilerListener(string namespaceString, string scriptName, int scriptId)
         {
             // Setup Accumulators
             m_AccumulatorScript = new();
-            m_AccumulatorScheduledBlock = new();
 
             // Setup Global Flag Containers
             m_FlagMap = new();
@@ -39,15 +41,18 @@ namespace DialogueScript
 
             // Write Warning Header
             m_AccumulatorScript.AppendLine("// DO NOT EDIT MANUALLY");
-            m_AccumulatorScript.AppendLine("// Generated " + System.DateTime.Now.ToString("dddd, dd MMMM yyyy HH:mm:ss"));
+            m_AccumulatorScript.AppendLine("// Generated " + DateTime.Now.ToString("dddd, dd MMMM yyyy HH:mm:ss"));
             m_AccumulatorScript.AppendLine("// DO NOT EDIT MANUALLY");
             m_AccumulatorScript.AppendLine();
 
             // Namespace
             m_Namespace = namespaceString;
 
-            // Classname
-            m_ClassName = className;
+            // Script name
+            m_ScriptName = scriptName;
+
+            // Script Id
+            m_ScriptId = scriptId;
         }
         #endregion
 
@@ -64,41 +69,85 @@ namespace DialogueScript
         #region Visitor Methods - Script
         public override void EnterScript(DialogueScriptParser.ScriptContext context)
         {
+            m_AccumulatorScript.AppendLine("using DialogueScript;");
             m_AccumulatorScript.AppendLine($"namespace {m_Namespace}");
-            m_AccumulatorScript.AppendLine("{"); // NAMESPACE OPEN
-            m_AccumulatorScript.AppendLine($"public static class {m_ClassName}");
-            m_AccumulatorScript.AppendLine("{"); // CLASS OPEN
+            m_AccumulatorScript.AppendLine("{"); // namespace - open
+            m_AccumulatorScript.AppendLine($"public struct {m_ScriptName} : Script");
+            m_AccumulatorScript.AppendLine("{"); // script - open
         }
 
         public override void ExitScript(DialogueScriptParser.ScriptContext context)
         {
-            // Generate Tick Function
-            m_AccumulatorScript.AppendLine("public static void Tick()");
+            // Comment Flags Names
+            m_AccumulatorScript.AppendLine("// Flag Map: ID - Name");
+            for (int i = 0; i < m_FlagList.Count; i++)
+            {
+                m_AccumulatorScript.AppendLine($"// {i} - {m_FlagList[i]}");
+            }
+
+            // FlagCount()
+            m_AccumulatorScript.AppendLine($"public static int FlagCount() => {m_FlagList.Count};");
+
+            // ScriptId()
+            m_AccumulatorScript.AppendLine($"public static int ScriptId() => {m_ScriptId};");
+
+            // ScriptName()
+            m_AccumulatorScript.AppendLine($"public static string ScriptName() => \"{m_ScriptName}\";");
+
+            // Tick() - open
+            m_AccumulatorScript.AppendLine("public void Tick(ExecutionContext context)");
             m_AccumulatorScript.AppendLine("{");
-            // TODO - check each block for the following:
-            // - not already executed
-            // - entry flags all set true
-            //
-            // Inside the if statement, execute the scheduled block code.
-            // EX:
-            // if (!executionContext.IsExecuted(i) && executionContext.FlagsSet(i))
-            // {
-            //     ScheduledBlock1(executionContext);
-            // }
+
+            // Tick() do-while loop - open
+            m_AccumulatorScript.AppendLine("do {");
+            m_AccumulatorScript.AppendLine("// Reset flag set alarm");
+            m_AccumulatorScript.AppendLine("context.ResetFlagSetAlarm();");
+
+            // Check Each Scheduled Block in the Tick
+            for (int i = 0; i < m_ScheduledBlocks.Count; i++)
+            {
+                // Grab Scheduled Block
+                ScheduledBlockBuilder scheduledBlock = m_ScheduledBlocks[i];
+
+                // Scheduled Block Header
+                m_AccumulatorScript.AppendLine($"// Scheduled Block - {i}");
+
+                // Execution Condition Check
+                m_AccumulatorScript.Append("if (");
+
+                // Make sure block hasn't already executed
+                m_AccumulatorScript.Append($"context.IsBlockExecuted({i})");
+
+                // Check if required flags are set
+                foreach (int entryFlagId in scheduledBlock.EntryFlags)
+                {
+                    m_AccumulatorScript.Append($" && context.IsFlagSet({m_FlagMap[m_FlagList[entryFlagId]]})");
+                }
+
+                m_AccumulatorScript.AppendLine(")");
+                m_AccumulatorScript.AppendLine("{");
+                m_AccumulatorScript.AppendLine($"{k_BlockNamePrefix}{i}(context);");
+                m_AccumulatorScript.AppendLine("}");
+            }
+
+            // Tick() do-while loop - close
+            m_AccumulatorScript.AppendLine("} while(context.IsFlagSetAlarmTriggered());");
+
+            // Tick() - close
             m_AccumulatorScript.AppendLine("}");
 
             // Generate Scheduled Block Functions
             for (int i = 0; i < m_ScheduledBlocks.Count; i++)
             {
-                m_AccumulatorScript.AppendLine($"private static void Block{i}()");
+                m_AccumulatorScript.AppendLine($"private void {k_BlockNamePrefix}{i}(ExecutionContext context)");
                 m_AccumulatorScript.AppendLine("{");
                 // TODO
                 m_AccumulatorScript.AppendLine("}");
             }
 
             // Close Contexts
-            m_AccumulatorScript.AppendLine("}"); // CLASS CLOSE
-            m_AccumulatorScript.AppendLine("}"); // NAMESPACE CLOSE
+            m_AccumulatorScript.AppendLine("}"); // script - CLOSE
+            m_AccumulatorScript.AppendLine("}"); // namespace - CLOSE
         }
         #endregion
 
@@ -113,7 +162,7 @@ namespace DialogueScript
             m_ScheduledBlocks.Add(scheduledBlockBuilder);
 
             // Add flags to block
-            AddFlagListToBlock(context.flag_list(), scheduledBlockBuilder, false);
+            AddFlagListToBlock(context.flag_list(), scheduledBlockBuilder, true);
         }
 
         public override void ExitScheduled_block_close(DialogueScriptParser.Scheduled_block_closeContext context)
@@ -125,7 +174,7 @@ namespace DialogueScript
         private void AddFlagListToBlock(
             DialogueScriptParser.Flag_listContext flagList, ScheduledBlockBuilder builder, bool isEntry)
         {
-            if (flagList.ChildCount > 0)
+            if (flagList != null && flagList.ChildCount > 0)
             {
                 for (int i = 0; i < flagList.ChildCount; i++)
                 {

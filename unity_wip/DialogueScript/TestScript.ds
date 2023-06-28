@@ -1,3 +1,7 @@
 <flag1,flag2<
     Test();
 >a1>
+
+<a1<
+    Best();
+>>

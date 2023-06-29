@@ -75,8 +75,6 @@ expression
         | INC
         | LPAREN type RPAREN
     ) expression # expression_unary
-    // Concat
-    | expression CONCAT expression # expression_concat
     // Multiplicative
     | expression MUL expression # expression_multiplicative_mul
     | expression DIV expression # expression_multiplicative_div
@@ -213,14 +211,11 @@ expression_relational
     | expression_relational GE expression_relational
     ;
 expression_shift
-    : expression_string_concat
+    : expression_additive
     | expression_shift '<' '<' expression_shift
     | expression_shift '>' '>' expression_shift
     ;
-expression_string_concat
-    : expression_additive
-    | expression_string_concat CONCAT expression_string_concat
-    ;
+
 expression_additive
     : expression_multiplicative
     | expression_additive ADD expression_additive

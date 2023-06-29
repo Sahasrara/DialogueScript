@@ -47,8 +47,8 @@ public partial class DialogueScriptParser : Parser {
 		AND_ASSIGN=45, OR_ASSIGN=46, XOR_ASSIGN=47, MOD_ASSIGN=48, LSHIFT_ASSIGN=49, 
 		RSHIFT_ASSIGN=50, GT=51, LT=52, EQUAL=53, LE=54, GE=55, NOTEQUAL=56, NOT=57, 
 		BIT_NOT=58, BIT_AND=59, BIT_OR=60, BIT_XOR=61, AND=62, OR=63, INC=64, 
-		DEC=65, ADD=66, SUB=67, MUL=68, DIV=69, MOD=70, CONCAT=71, TERNARY=72, 
-		IDENTIFIER=73, WHITESPACE=74, COMMENT_BLOCK=75, COMMENT_LINE=76;
+		DEC=65, ADD=66, SUB=67, MUL=68, DIV=69, MOD=70, TERNARY=71, IDENTIFIER=72, 
+		WHITESPACE=73, COMMENT_BLOCK=74, COMMENT_LINE=75;
 	public const int
 		RULE_script = 0, RULE_scheduled_block = 1, RULE_scheduled_block_open = 2, 
 		RULE_scheduled_block_close = 3, RULE_block = 4, RULE_statement = 5, RULE_compound_statement = 6, 
@@ -76,7 +76,7 @@ public partial class DialogueScriptParser : Parser {
 		"'::'", "'='", "'+='", "'-='", "'*='", "'/='", "'&='", "'|='", "'^='", 
 		"'%='", "'<<='", "'>>='", "'>'", "'<'", "'=='", "'<='", "'>='", "'!='", 
 		"'!'", "'~'", "'&'", "'|'", "'^'", "'&&'", "'||'", "'++'", "'--'", "'+'", 
-		"'-'", "'*'", "'/'", "'%'", "'..'", "'?'"
+		"'-'", "'*'", "'/'", "'%'", "'?'"
 	};
 	private static readonly string[] _SymbolicNames = {
 		null, "TYPE_BOOLEAN", "TYPE_CHAR", "TYPE_FLOAT_DEFAULT", "TYPE_FLOAT32", 
@@ -90,8 +90,8 @@ public partial class DialogueScriptParser : Parser {
 		"AND_ASSIGN", "OR_ASSIGN", "XOR_ASSIGN", "MOD_ASSIGN", "LSHIFT_ASSIGN", 
 		"RSHIFT_ASSIGN", "GT", "LT", "EQUAL", "LE", "GE", "NOTEQUAL", "NOT", "BIT_NOT", 
 		"BIT_AND", "BIT_OR", "BIT_XOR", "AND", "OR", "INC", "DEC", "ADD", "SUB", 
-		"MUL", "DIV", "MOD", "CONCAT", "TERNARY", "IDENTIFIER", "WHITESPACE", 
-		"COMMENT_BLOCK", "COMMENT_LINE"
+		"MUL", "DIV", "MOD", "TERNARY", "IDENTIFIER", "WHITESPACE", "COMMENT_BLOCK", 
+		"COMMENT_LINE"
 	};
 	public static readonly IVocabulary DefaultVocabulary = new Vocabulary(_LiteralNames, _SymbolicNames);
 
@@ -147,6 +147,12 @@ public partial class DialogueScriptParser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			IDialogueScriptParserListener typedListener = listener as IDialogueScriptParserListener;
 			if (typedListener != null) typedListener.ExitScript(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IDialogueScriptParserVisitor<TResult> typedVisitor = visitor as IDialogueScriptParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitScript(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -212,6 +218,12 @@ public partial class DialogueScriptParser : Parser {
 			IDialogueScriptParserListener typedListener = listener as IDialogueScriptParserListener;
 			if (typedListener != null) typedListener.ExitScheduled_block(this);
 		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IDialogueScriptParserVisitor<TResult> typedVisitor = visitor as IDialogueScriptParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitScheduled_block(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -262,6 +274,12 @@ public partial class DialogueScriptParser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			IDialogueScriptParserListener typedListener = listener as IDialogueScriptParserListener;
 			if (typedListener != null) typedListener.ExitScheduled_block_open(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IDialogueScriptParserVisitor<TResult> typedVisitor = visitor as IDialogueScriptParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitScheduled_block_open(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -323,6 +341,12 @@ public partial class DialogueScriptParser : Parser {
 			IDialogueScriptParserListener typedListener = listener as IDialogueScriptParserListener;
 			if (typedListener != null) typedListener.ExitScheduled_block_close(this);
 		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IDialogueScriptParserVisitor<TResult> typedVisitor = visitor as IDialogueScriptParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitScheduled_block_close(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -382,6 +406,12 @@ public partial class DialogueScriptParser : Parser {
 			IDialogueScriptParserListener typedListener = listener as IDialogueScriptParserListener;
 			if (typedListener != null) typedListener.ExitBlock(this);
 		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IDialogueScriptParserVisitor<TResult> typedVisitor = visitor as IDialogueScriptParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitBlock(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -395,7 +425,7 @@ public partial class DialogueScriptParser : Parser {
 			State = 79;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 432345567445909502L) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & 527L) != 0)) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 432345567445909502L) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & 271L) != 0)) {
 				{
 				{
 				State = 76;
@@ -452,6 +482,12 @@ public partial class DialogueScriptParser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			IDialogueScriptParserListener typedListener = listener as IDialogueScriptParserListener;
 			if (typedListener != null) typedListener.ExitStatement(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IDialogueScriptParserVisitor<TResult> typedVisitor = visitor as IDialogueScriptParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitStatement(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -539,6 +575,12 @@ public partial class DialogueScriptParser : Parser {
 			IDialogueScriptParserListener typedListener = listener as IDialogueScriptParserListener;
 			if (typedListener != null) typedListener.ExitCompound_statement(this);
 		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IDialogueScriptParserVisitor<TResult> typedVisitor = visitor as IDialogueScriptParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitCompound_statement(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -554,7 +596,7 @@ public partial class DialogueScriptParser : Parser {
 			State = 92;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
-			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 432345567445909502L) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & 527L) != 0)) {
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 432345567445909502L) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & 271L) != 0)) {
 				{
 				State = 91;
 				statement_list();
@@ -598,6 +640,12 @@ public partial class DialogueScriptParser : Parser {
 			IDialogueScriptParserListener typedListener = listener as IDialogueScriptParserListener;
 			if (typedListener != null) typedListener.ExitStatement_list(this);
 		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IDialogueScriptParserVisitor<TResult> typedVisitor = visitor as IDialogueScriptParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitStatement_list(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -621,7 +669,7 @@ public partial class DialogueScriptParser : Parser {
 				State = 99;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
-			} while ( (((_la) & ~0x3f) == 0 && ((1L << _la) & 432345567445909502L) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & 527L) != 0) );
+			} while ( (((_la) & ~0x3f) == 0 && ((1L << _la) & 432345567445909502L) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & 271L) != 0) );
 			}
 		}
 		catch (RecognitionException re) {
@@ -654,6 +702,12 @@ public partial class DialogueScriptParser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			IDialogueScriptParserListener typedListener = listener as IDialogueScriptParserListener;
 			if (typedListener != null) typedListener.ExitExpression_statement(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IDialogueScriptParserVisitor<TResult> typedVisitor = visitor as IDialogueScriptParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitExpression_statement(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -709,6 +763,12 @@ public partial class DialogueScriptParser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			IDialogueScriptParserListener typedListener = listener as IDialogueScriptParserListener;
 			if (typedListener != null) typedListener.ExitIf_statement(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IDialogueScriptParserVisitor<TResult> typedVisitor = visitor as IDialogueScriptParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitIf_statement(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -779,6 +839,12 @@ public partial class DialogueScriptParser : Parser {
 			IDialogueScriptParserListener typedListener = listener as IDialogueScriptParserListener;
 			if (typedListener != null) typedListener.ExitSwitch_statement(this);
 		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IDialogueScriptParserVisitor<TResult> typedVisitor = visitor as IDialogueScriptParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitSwitch_statement(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -834,6 +900,12 @@ public partial class DialogueScriptParser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			IDialogueScriptParserListener typedListener = listener as IDialogueScriptParserListener;
 			if (typedListener != null) typedListener.ExitSwitch_block(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IDialogueScriptParserVisitor<TResult> typedVisitor = visitor as IDialogueScriptParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitSwitch_block(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -904,6 +976,12 @@ public partial class DialogueScriptParser : Parser {
 			IDialogueScriptParserListener typedListener = listener as IDialogueScriptParserListener;
 			if (typedListener != null) typedListener.ExitSwitch_label(this);
 		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IDialogueScriptParserVisitor<TResult> typedVisitor = visitor as IDialogueScriptParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitSwitch_label(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -927,7 +1005,7 @@ public partial class DialogueScriptParser : Parser {
 				State = 134;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
-				while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 432345567445909502L) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & 527L) != 0)) {
+				while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 432345567445909502L) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & 271L) != 0)) {
 					{
 					{
 					State = 131;
@@ -950,7 +1028,7 @@ public partial class DialogueScriptParser : Parser {
 				State = 142;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
-				while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 432345567445909502L) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & 527L) != 0)) {
+				while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 432345567445909502L) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & 271L) != 0)) {
 					{
 					{
 					State = 139;
@@ -1000,6 +1078,12 @@ public partial class DialogueScriptParser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			IDialogueScriptParserListener typedListener = listener as IDialogueScriptParserListener;
 			if (typedListener != null) typedListener.ExitDeclaration_statement(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IDialogueScriptParserVisitor<TResult> typedVisitor = visitor as IDialogueScriptParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitDeclaration_statement(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -1051,6 +1135,12 @@ public partial class DialogueScriptParser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			IDialogueScriptParserListener typedListener = listener as IDialogueScriptParserListener;
 			if (typedListener != null) typedListener.ExitDeclarator_init(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IDialogueScriptParserVisitor<TResult> typedVisitor = visitor as IDialogueScriptParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitDeclarator_init(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -1106,6 +1196,12 @@ public partial class DialogueScriptParser : Parser {
 			IDialogueScriptParserListener typedListener = listener as IDialogueScriptParserListener;
 			if (typedListener != null) typedListener.ExitDeclarator(this);
 		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IDialogueScriptParserVisitor<TResult> typedVisitor = visitor as IDialogueScriptParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitDeclarator(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -1147,6 +1243,12 @@ public partial class DialogueScriptParser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			IDialogueScriptParserListener typedListener = listener as IDialogueScriptParserListener;
 			if (typedListener != null) typedListener.ExitBreak_statement(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IDialogueScriptParserVisitor<TResult> typedVisitor = visitor as IDialogueScriptParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitBreak_statement(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -1199,6 +1301,12 @@ public partial class DialogueScriptParser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			IDialogueScriptParserListener typedListener = listener as IDialogueScriptParserListener;
 			if (typedListener != null) typedListener.ExitExpression_list(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IDialogueScriptParserVisitor<TResult> typedVisitor = visitor as IDialogueScriptParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitExpression_list(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -1272,25 +1380,11 @@ public partial class DialogueScriptParser : Parser {
 			IDialogueScriptParserListener typedListener = listener as IDialogueScriptParserListener;
 			if (typedListener != null) typedListener.ExitExpression_bitwise_or(this);
 		}
-	}
-	public partial class Expression_concatContext : ExpressionContext {
-		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext[] expression() {
-			return GetRuleContexts<ExpressionContext>();
-		}
-		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression(int i) {
-			return GetRuleContext<ExpressionContext>(i);
-		}
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode CONCAT() { return GetToken(DialogueScriptParser.CONCAT, 0); }
-		public Expression_concatContext(ExpressionContext context) { CopyFrom(context); }
 		[System.Diagnostics.DebuggerNonUserCode]
-		public override void EnterRule(IParseTreeListener listener) {
-			IDialogueScriptParserListener typedListener = listener as IDialogueScriptParserListener;
-			if (typedListener != null) typedListener.EnterExpression_concat(this);
-		}
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override void ExitRule(IParseTreeListener listener) {
-			IDialogueScriptParserListener typedListener = listener as IDialogueScriptParserListener;
-			if (typedListener != null) typedListener.ExitExpression_concat(this);
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IDialogueScriptParserVisitor<TResult> typedVisitor = visitor as IDialogueScriptParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitExpression_bitwise_or(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 	public partial class Expression_bitwise_andContext : ExpressionContext {
@@ -1312,6 +1406,12 @@ public partial class DialogueScriptParser : Parser {
 			IDialogueScriptParserListener typedListener = listener as IDialogueScriptParserListener;
 			if (typedListener != null) typedListener.ExitExpression_bitwise_and(this);
 		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IDialogueScriptParserVisitor<TResult> typedVisitor = visitor as IDialogueScriptParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitExpression_bitwise_and(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 	public partial class Expression_relational_gtContext : ExpressionContext {
 		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext[] expression() {
@@ -1331,6 +1431,12 @@ public partial class DialogueScriptParser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			IDialogueScriptParserListener typedListener = listener as IDialogueScriptParserListener;
 			if (typedListener != null) typedListener.ExitExpression_relational_gt(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IDialogueScriptParserVisitor<TResult> typedVisitor = visitor as IDialogueScriptParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitExpression_relational_gt(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 	public partial class Expression_postfix_invokeContext : ExpressionContext {
@@ -1353,6 +1459,12 @@ public partial class DialogueScriptParser : Parser {
 			IDialogueScriptParserListener typedListener = listener as IDialogueScriptParserListener;
 			if (typedListener != null) typedListener.ExitExpression_postfix_invoke(this);
 		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IDialogueScriptParserVisitor<TResult> typedVisitor = visitor as IDialogueScriptParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitExpression_postfix_invoke(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 	public partial class Expression_bitwise_xorContext : ExpressionContext {
 		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext[] expression() {
@@ -1373,6 +1485,12 @@ public partial class DialogueScriptParser : Parser {
 			IDialogueScriptParserListener typedListener = listener as IDialogueScriptParserListener;
 			if (typedListener != null) typedListener.ExitExpression_bitwise_xor(this);
 		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IDialogueScriptParserVisitor<TResult> typedVisitor = visitor as IDialogueScriptParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitExpression_bitwise_xor(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 	public partial class Expression_postfix_inc_decContext : ExpressionContext {
 		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression() {
@@ -1391,6 +1509,12 @@ public partial class DialogueScriptParser : Parser {
 			IDialogueScriptParserListener typedListener = listener as IDialogueScriptParserListener;
 			if (typedListener != null) typedListener.ExitExpression_postfix_inc_dec(this);
 		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IDialogueScriptParserVisitor<TResult> typedVisitor = visitor as IDialogueScriptParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitExpression_postfix_inc_dec(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 	public partial class Expression_primary_parentheticalContext : ExpressionContext {
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode LPAREN() { return GetToken(DialogueScriptParser.LPAREN, 0); }
@@ -1408,6 +1532,12 @@ public partial class DialogueScriptParser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			IDialogueScriptParserListener typedListener = listener as IDialogueScriptParserListener;
 			if (typedListener != null) typedListener.ExitExpression_primary_parenthetical(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IDialogueScriptParserVisitor<TResult> typedVisitor = visitor as IDialogueScriptParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitExpression_primary_parenthetical(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 	public partial class Expression_additive_addContext : ExpressionContext {
@@ -1428,6 +1558,12 @@ public partial class DialogueScriptParser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			IDialogueScriptParserListener typedListener = listener as IDialogueScriptParserListener;
 			if (typedListener != null) typedListener.ExitExpression_additive_add(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IDialogueScriptParserVisitor<TResult> typedVisitor = visitor as IDialogueScriptParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitExpression_additive_add(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 	public partial class Expression_shift_rightContext : ExpressionContext {
@@ -1452,6 +1588,12 @@ public partial class DialogueScriptParser : Parser {
 			IDialogueScriptParserListener typedListener = listener as IDialogueScriptParserListener;
 			if (typedListener != null) typedListener.ExitExpression_shift_right(this);
 		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IDialogueScriptParserVisitor<TResult> typedVisitor = visitor as IDialogueScriptParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitExpression_shift_right(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 	public partial class Expression_ternaryContext : ExpressionContext {
 		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext[] expression() {
@@ -1473,6 +1615,12 @@ public partial class DialogueScriptParser : Parser {
 			IDialogueScriptParserListener typedListener = listener as IDialogueScriptParserListener;
 			if (typedListener != null) typedListener.ExitExpression_ternary(this);
 		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IDialogueScriptParserVisitor<TResult> typedVisitor = visitor as IDialogueScriptParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitExpression_ternary(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 	public partial class Expression_equality_not_eqContext : ExpressionContext {
 		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext[] expression() {
@@ -1492,6 +1640,12 @@ public partial class DialogueScriptParser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			IDialogueScriptParserListener typedListener = listener as IDialogueScriptParserListener;
 			if (typedListener != null) typedListener.ExitExpression_equality_not_eq(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IDialogueScriptParserVisitor<TResult> typedVisitor = visitor as IDialogueScriptParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitExpression_equality_not_eq(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 	public partial class Expression_logical_orContext : ExpressionContext {
@@ -1513,6 +1667,12 @@ public partial class DialogueScriptParser : Parser {
 			IDialogueScriptParserListener typedListener = listener as IDialogueScriptParserListener;
 			if (typedListener != null) typedListener.ExitExpression_logical_or(this);
 		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IDialogueScriptParserVisitor<TResult> typedVisitor = visitor as IDialogueScriptParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitExpression_logical_or(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 	public partial class Expression_primary_literalContext : ExpressionContext {
 		[System.Diagnostics.DebuggerNonUserCode] public LiteralContext literal() {
@@ -1528,6 +1688,12 @@ public partial class DialogueScriptParser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			IDialogueScriptParserListener typedListener = listener as IDialogueScriptParserListener;
 			if (typedListener != null) typedListener.ExitExpression_primary_literal(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IDialogueScriptParserVisitor<TResult> typedVisitor = visitor as IDialogueScriptParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitExpression_primary_literal(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 	public partial class Expression_relational_geContext : ExpressionContext {
@@ -1549,6 +1715,12 @@ public partial class DialogueScriptParser : Parser {
 			IDialogueScriptParserListener typedListener = listener as IDialogueScriptParserListener;
 			if (typedListener != null) typedListener.ExitExpression_relational_ge(this);
 		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IDialogueScriptParserVisitor<TResult> typedVisitor = visitor as IDialogueScriptParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitExpression_relational_ge(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 	public partial class Expression_postfix_invoke_asyncContext : ExpressionContext {
 		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression() {
@@ -1569,6 +1741,12 @@ public partial class DialogueScriptParser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			IDialogueScriptParserListener typedListener = listener as IDialogueScriptParserListener;
 			if (typedListener != null) typedListener.ExitExpression_postfix_invoke_async(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IDialogueScriptParserVisitor<TResult> typedVisitor = visitor as IDialogueScriptParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitExpression_postfix_invoke_async(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 	public partial class Expression_shift_leftContext : ExpressionContext {
@@ -1593,6 +1771,12 @@ public partial class DialogueScriptParser : Parser {
 			IDialogueScriptParserListener typedListener = listener as IDialogueScriptParserListener;
 			if (typedListener != null) typedListener.ExitExpression_shift_left(this);
 		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IDialogueScriptParserVisitor<TResult> typedVisitor = visitor as IDialogueScriptParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitExpression_shift_left(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 	public partial class Expression_equality_eqContext : ExpressionContext {
 		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext[] expression() {
@@ -1613,6 +1797,12 @@ public partial class DialogueScriptParser : Parser {
 			IDialogueScriptParserListener typedListener = listener as IDialogueScriptParserListener;
 			if (typedListener != null) typedListener.ExitExpression_equality_eq(this);
 		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IDialogueScriptParserVisitor<TResult> typedVisitor = visitor as IDialogueScriptParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitExpression_equality_eq(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 	public partial class Expression_primary_nameContext : ExpressionContext {
 		[System.Diagnostics.DebuggerNonUserCode] public NameContext name() {
@@ -1628,6 +1818,12 @@ public partial class DialogueScriptParser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			IDialogueScriptParserListener typedListener = listener as IDialogueScriptParserListener;
 			if (typedListener != null) typedListener.ExitExpression_primary_name(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IDialogueScriptParserVisitor<TResult> typedVisitor = visitor as IDialogueScriptParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitExpression_primary_name(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 	public partial class Expression_assignmentContext : ExpressionContext {
@@ -1651,6 +1847,12 @@ public partial class DialogueScriptParser : Parser {
 			IDialogueScriptParserListener typedListener = listener as IDialogueScriptParserListener;
 			if (typedListener != null) typedListener.ExitExpression_assignment(this);
 		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IDialogueScriptParserVisitor<TResult> typedVisitor = visitor as IDialogueScriptParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitExpression_assignment(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 	public partial class Expression_relational_ltContext : ExpressionContext {
 		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext[] expression() {
@@ -1670,6 +1872,12 @@ public partial class DialogueScriptParser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			IDialogueScriptParserListener typedListener = listener as IDialogueScriptParserListener;
 			if (typedListener != null) typedListener.ExitExpression_relational_lt(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IDialogueScriptParserVisitor<TResult> typedVisitor = visitor as IDialogueScriptParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitExpression_relational_lt(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 	public partial class Expression_unaryContext : ExpressionContext {
@@ -1698,6 +1906,12 @@ public partial class DialogueScriptParser : Parser {
 			IDialogueScriptParserListener typedListener = listener as IDialogueScriptParserListener;
 			if (typedListener != null) typedListener.ExitExpression_unary(this);
 		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IDialogueScriptParserVisitor<TResult> typedVisitor = visitor as IDialogueScriptParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitExpression_unary(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 	public partial class Expression_additive_subContext : ExpressionContext {
 		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext[] expression() {
@@ -1718,6 +1932,12 @@ public partial class DialogueScriptParser : Parser {
 			IDialogueScriptParserListener typedListener = listener as IDialogueScriptParserListener;
 			if (typedListener != null) typedListener.ExitExpression_additive_sub(this);
 		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IDialogueScriptParserVisitor<TResult> typedVisitor = visitor as IDialogueScriptParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitExpression_additive_sub(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 	public partial class Expression_multiplicative_divContext : ExpressionContext {
 		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext[] expression() {
@@ -1737,6 +1957,12 @@ public partial class DialogueScriptParser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			IDialogueScriptParserListener typedListener = listener as IDialogueScriptParserListener;
 			if (typedListener != null) typedListener.ExitExpression_multiplicative_div(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IDialogueScriptParserVisitor<TResult> typedVisitor = visitor as IDialogueScriptParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitExpression_multiplicative_div(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 	public partial class Expression_postfix_array_accessContext : ExpressionContext {
@@ -1759,6 +1985,12 @@ public partial class DialogueScriptParser : Parser {
 			IDialogueScriptParserListener typedListener = listener as IDialogueScriptParserListener;
 			if (typedListener != null) typedListener.ExitExpression_postfix_array_access(this);
 		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IDialogueScriptParserVisitor<TResult> typedVisitor = visitor as IDialogueScriptParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitExpression_postfix_array_access(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 	public partial class Expression_logical_andContext : ExpressionContext {
 		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext[] expression() {
@@ -1778,6 +2010,12 @@ public partial class DialogueScriptParser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			IDialogueScriptParserListener typedListener = listener as IDialogueScriptParserListener;
 			if (typedListener != null) typedListener.ExitExpression_logical_and(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IDialogueScriptParserVisitor<TResult> typedVisitor = visitor as IDialogueScriptParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitExpression_logical_and(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 	public partial class Expression_multiplicative_mulContext : ExpressionContext {
@@ -1799,6 +2037,12 @@ public partial class DialogueScriptParser : Parser {
 			IDialogueScriptParserListener typedListener = listener as IDialogueScriptParserListener;
 			if (typedListener != null) typedListener.ExitExpression_multiplicative_mul(this);
 		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IDialogueScriptParserVisitor<TResult> typedVisitor = visitor as IDialogueScriptParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitExpression_multiplicative_mul(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 	public partial class Expression_multiplicative_modContext : ExpressionContext {
 		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext[] expression() {
@@ -1819,6 +2063,12 @@ public partial class DialogueScriptParser : Parser {
 			IDialogueScriptParserListener typedListener = listener as IDialogueScriptParserListener;
 			if (typedListener != null) typedListener.ExitExpression_multiplicative_mod(this);
 		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IDialogueScriptParserVisitor<TResult> typedVisitor = visitor as IDialogueScriptParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitExpression_multiplicative_mod(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 	public partial class Expression_relational_leContext : ExpressionContext {
 		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext[] expression() {
@@ -1838,6 +2088,12 @@ public partial class DialogueScriptParser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			IDialogueScriptParserListener typedListener = listener as IDialogueScriptParserListener;
 			if (typedListener != null) typedListener.ExitExpression_relational_le(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IDialogueScriptParserVisitor<TResult> typedVisitor = visitor as IDialogueScriptParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitExpression_relational_le(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -1951,12 +2207,12 @@ public partial class DialogueScriptParser : Parser {
 					throw new NoViableAltException(this);
 				}
 				State = 188;
-				expression(22);
+				expression(21);
 				}
 				break;
 			}
 			Context.Stop = TokenStream.LT(-1);
-			State = 281;
+			State = 278;
 			ErrorHandler.Sync(this);
 			_alt = Interpreter.AdaptivePredict(TokenStream,19,Context);
 			while ( _alt!=2 && _alt!=global::Antlr4.Runtime.Atn.ATN.INVALID_ALT_NUMBER ) {
@@ -1965,276 +2221,264 @@ public partial class DialogueScriptParser : Parser {
 						TriggerExitRuleEvent();
 					_prevctx = _localctx;
 					{
-					State = 279;
+					State = 276;
 					ErrorHandler.Sync(this);
 					switch ( Interpreter.AdaptivePredict(TokenStream,18,Context) ) {
 					case 1:
 						{
-						_localctx = new Expression_concatContext(new ExpressionContext(_parentctx, _parentState));
+						_localctx = new Expression_multiplicative_mulContext(new ExpressionContext(_parentctx, _parentState));
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
 						State = 191;
-						if (!(Precpred(Context, 21))) throw new FailedPredicateException(this, "Precpred(Context, 21)");
+						if (!(Precpred(Context, 20))) throw new FailedPredicateException(this, "Precpred(Context, 20)");
 						State = 192;
-						Match(CONCAT);
+						Match(MUL);
 						State = 193;
-						expression(22);
+						expression(21);
 						}
 						break;
 					case 2:
 						{
-						_localctx = new Expression_multiplicative_mulContext(new ExpressionContext(_parentctx, _parentState));
+						_localctx = new Expression_multiplicative_divContext(new ExpressionContext(_parentctx, _parentState));
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
 						State = 194;
-						if (!(Precpred(Context, 20))) throw new FailedPredicateException(this, "Precpred(Context, 20)");
+						if (!(Precpred(Context, 19))) throw new FailedPredicateException(this, "Precpred(Context, 19)");
 						State = 195;
-						Match(MUL);
+						Match(DIV);
 						State = 196;
-						expression(21);
+						expression(20);
 						}
 						break;
 					case 3:
 						{
-						_localctx = new Expression_multiplicative_divContext(new ExpressionContext(_parentctx, _parentState));
+						_localctx = new Expression_multiplicative_modContext(new ExpressionContext(_parentctx, _parentState));
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
 						State = 197;
-						if (!(Precpred(Context, 19))) throw new FailedPredicateException(this, "Precpred(Context, 19)");
+						if (!(Precpred(Context, 18))) throw new FailedPredicateException(this, "Precpred(Context, 18)");
 						State = 198;
-						Match(DIV);
+						Match(MOD);
 						State = 199;
-						expression(20);
+						expression(19);
 						}
 						break;
 					case 4:
 						{
-						_localctx = new Expression_multiplicative_modContext(new ExpressionContext(_parentctx, _parentState));
+						_localctx = new Expression_additive_addContext(new ExpressionContext(_parentctx, _parentState));
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
 						State = 200;
-						if (!(Precpred(Context, 18))) throw new FailedPredicateException(this, "Precpred(Context, 18)");
+						if (!(Precpred(Context, 17))) throw new FailedPredicateException(this, "Precpred(Context, 17)");
 						State = 201;
-						Match(MOD);
+						Match(ADD);
 						State = 202;
-						expression(19);
+						expression(18);
 						}
 						break;
 					case 5:
 						{
-						_localctx = new Expression_additive_addContext(new ExpressionContext(_parentctx, _parentState));
+						_localctx = new Expression_additive_subContext(new ExpressionContext(_parentctx, _parentState));
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
 						State = 203;
-						if (!(Precpred(Context, 17))) throw new FailedPredicateException(this, "Precpred(Context, 17)");
+						if (!(Precpred(Context, 16))) throw new FailedPredicateException(this, "Precpred(Context, 16)");
 						State = 204;
-						Match(ADD);
+						Match(SUB);
 						State = 205;
-						expression(18);
+						expression(17);
 						}
 						break;
 					case 6:
 						{
-						_localctx = new Expression_additive_subContext(new ExpressionContext(_parentctx, _parentState));
+						_localctx = new Expression_shift_leftContext(new ExpressionContext(_parentctx, _parentState));
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
 						State = 206;
-						if (!(Precpred(Context, 16))) throw new FailedPredicateException(this, "Precpred(Context, 16)");
+						if (!(Precpred(Context, 15))) throw new FailedPredicateException(this, "Precpred(Context, 15)");
 						State = 207;
-						Match(SUB);
+						Match(LT);
 						State = 208;
-						expression(17);
+						Match(LT);
+						State = 209;
+						expression(16);
 						}
 						break;
 					case 7:
 						{
-						_localctx = new Expression_shift_leftContext(new ExpressionContext(_parentctx, _parentState));
+						_localctx = new Expression_shift_rightContext(new ExpressionContext(_parentctx, _parentState));
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
-						State = 209;
-						if (!(Precpred(Context, 15))) throw new FailedPredicateException(this, "Precpred(Context, 15)");
 						State = 210;
-						Match(LT);
+						if (!(Precpred(Context, 14))) throw new FailedPredicateException(this, "Precpred(Context, 14)");
 						State = 211;
-						Match(LT);
+						Match(GT);
 						State = 212;
-						expression(16);
+						Match(GT);
+						State = 213;
+						expression(15);
 						}
 						break;
 					case 8:
 						{
-						_localctx = new Expression_shift_rightContext(new ExpressionContext(_parentctx, _parentState));
+						_localctx = new Expression_relational_ltContext(new ExpressionContext(_parentctx, _parentState));
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
-						State = 213;
-						if (!(Precpred(Context, 14))) throw new FailedPredicateException(this, "Precpred(Context, 14)");
 						State = 214;
-						Match(GT);
+						if (!(Precpred(Context, 13))) throw new FailedPredicateException(this, "Precpred(Context, 13)");
 						State = 215;
-						Match(GT);
+						Match(LT);
 						State = 216;
-						expression(15);
+						expression(14);
 						}
 						break;
 					case 9:
 						{
-						_localctx = new Expression_relational_ltContext(new ExpressionContext(_parentctx, _parentState));
+						_localctx = new Expression_relational_gtContext(new ExpressionContext(_parentctx, _parentState));
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
 						State = 217;
-						if (!(Precpred(Context, 13))) throw new FailedPredicateException(this, "Precpred(Context, 13)");
+						if (!(Precpred(Context, 12))) throw new FailedPredicateException(this, "Precpred(Context, 12)");
 						State = 218;
-						Match(LT);
+						Match(GT);
 						State = 219;
-						expression(14);
+						expression(13);
 						}
 						break;
 					case 10:
 						{
-						_localctx = new Expression_relational_gtContext(new ExpressionContext(_parentctx, _parentState));
+						_localctx = new Expression_relational_leContext(new ExpressionContext(_parentctx, _parentState));
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
 						State = 220;
-						if (!(Precpred(Context, 12))) throw new FailedPredicateException(this, "Precpred(Context, 12)");
+						if (!(Precpred(Context, 11))) throw new FailedPredicateException(this, "Precpred(Context, 11)");
 						State = 221;
-						Match(GT);
+						Match(LE);
 						State = 222;
-						expression(13);
+						expression(12);
 						}
 						break;
 					case 11:
 						{
-						_localctx = new Expression_relational_leContext(new ExpressionContext(_parentctx, _parentState));
+						_localctx = new Expression_relational_geContext(new ExpressionContext(_parentctx, _parentState));
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
 						State = 223;
-						if (!(Precpred(Context, 11))) throw new FailedPredicateException(this, "Precpred(Context, 11)");
+						if (!(Precpred(Context, 10))) throw new FailedPredicateException(this, "Precpred(Context, 10)");
 						State = 224;
-						Match(LE);
+						Match(GE);
 						State = 225;
-						expression(12);
+						expression(11);
 						}
 						break;
 					case 12:
 						{
-						_localctx = new Expression_relational_geContext(new ExpressionContext(_parentctx, _parentState));
+						_localctx = new Expression_equality_eqContext(new ExpressionContext(_parentctx, _parentState));
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
 						State = 226;
-						if (!(Precpred(Context, 10))) throw new FailedPredicateException(this, "Precpred(Context, 10)");
+						if (!(Precpred(Context, 9))) throw new FailedPredicateException(this, "Precpred(Context, 9)");
 						State = 227;
-						Match(GE);
+						Match(EQUAL);
 						State = 228;
-						expression(11);
+						expression(10);
 						}
 						break;
 					case 13:
 						{
-						_localctx = new Expression_equality_eqContext(new ExpressionContext(_parentctx, _parentState));
+						_localctx = new Expression_equality_not_eqContext(new ExpressionContext(_parentctx, _parentState));
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
 						State = 229;
-						if (!(Precpred(Context, 9))) throw new FailedPredicateException(this, "Precpred(Context, 9)");
+						if (!(Precpred(Context, 8))) throw new FailedPredicateException(this, "Precpred(Context, 8)");
 						State = 230;
-						Match(EQUAL);
+						Match(NOTEQUAL);
 						State = 231;
-						expression(10);
+						expression(9);
 						}
 						break;
 					case 14:
 						{
-						_localctx = new Expression_equality_not_eqContext(new ExpressionContext(_parentctx, _parentState));
+						_localctx = new Expression_bitwise_andContext(new ExpressionContext(_parentctx, _parentState));
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
 						State = 232;
-						if (!(Precpred(Context, 8))) throw new FailedPredicateException(this, "Precpred(Context, 8)");
+						if (!(Precpred(Context, 7))) throw new FailedPredicateException(this, "Precpred(Context, 7)");
 						State = 233;
-						Match(NOTEQUAL);
+						Match(BIT_AND);
 						State = 234;
-						expression(9);
+						expression(8);
 						}
 						break;
 					case 15:
 						{
-						_localctx = new Expression_bitwise_andContext(new ExpressionContext(_parentctx, _parentState));
+						_localctx = new Expression_bitwise_orContext(new ExpressionContext(_parentctx, _parentState));
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
 						State = 235;
-						if (!(Precpred(Context, 7))) throw new FailedPredicateException(this, "Precpred(Context, 7)");
+						if (!(Precpred(Context, 6))) throw new FailedPredicateException(this, "Precpred(Context, 6)");
 						State = 236;
-						Match(BIT_AND);
+						Match(BIT_OR);
 						State = 237;
-						expression(8);
+						expression(7);
 						}
 						break;
 					case 16:
 						{
-						_localctx = new Expression_bitwise_orContext(new ExpressionContext(_parentctx, _parentState));
+						_localctx = new Expression_bitwise_xorContext(new ExpressionContext(_parentctx, _parentState));
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
 						State = 238;
-						if (!(Precpred(Context, 6))) throw new FailedPredicateException(this, "Precpred(Context, 6)");
+						if (!(Precpred(Context, 5))) throw new FailedPredicateException(this, "Precpred(Context, 5)");
 						State = 239;
-						Match(BIT_OR);
+						Match(BIT_XOR);
 						State = 240;
-						expression(7);
+						expression(6);
 						}
 						break;
 					case 17:
 						{
-						_localctx = new Expression_bitwise_xorContext(new ExpressionContext(_parentctx, _parentState));
+						_localctx = new Expression_logical_andContext(new ExpressionContext(_parentctx, _parentState));
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
 						State = 241;
-						if (!(Precpred(Context, 5))) throw new FailedPredicateException(this, "Precpred(Context, 5)");
+						if (!(Precpred(Context, 4))) throw new FailedPredicateException(this, "Precpred(Context, 4)");
 						State = 242;
-						Match(BIT_XOR);
+						Match(AND);
 						State = 243;
-						expression(6);
+						expression(5);
 						}
 						break;
 					case 18:
 						{
-						_localctx = new Expression_logical_andContext(new ExpressionContext(_parentctx, _parentState));
+						_localctx = new Expression_logical_orContext(new ExpressionContext(_parentctx, _parentState));
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
 						State = 244;
-						if (!(Precpred(Context, 4))) throw new FailedPredicateException(this, "Precpred(Context, 4)");
+						if (!(Precpred(Context, 3))) throw new FailedPredicateException(this, "Precpred(Context, 3)");
 						State = 245;
-						Match(AND);
+						Match(OR);
 						State = 246;
-						expression(5);
+						expression(4);
 						}
 						break;
 					case 19:
 						{
-						_localctx = new Expression_logical_orContext(new ExpressionContext(_parentctx, _parentState));
+						_localctx = new Expression_ternaryContext(new ExpressionContext(_parentctx, _parentState));
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
 						State = 247;
-						if (!(Precpred(Context, 3))) throw new FailedPredicateException(this, "Precpred(Context, 3)");
+						if (!(Precpred(Context, 2))) throw new FailedPredicateException(this, "Precpred(Context, 2)");
 						State = 248;
-						Match(OR);
+						Match(TERNARY);
 						State = 249;
-						expression(4);
+						expression(0);
+						State = 250;
+						Match(COLON);
+						State = 251;
+						expression(2);
 						}
 						break;
 					case 20:
 						{
-						_localctx = new Expression_ternaryContext(new ExpressionContext(_parentctx, _parentState));
+						_localctx = new Expression_assignmentContext(new ExpressionContext(_parentctx, _parentState));
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
-						State = 250;
-						if (!(Precpred(Context, 2))) throw new FailedPredicateException(this, "Precpred(Context, 2)");
-						State = 251;
-						Match(TERNARY);
-						State = 252;
-						expression(0);
 						State = 253;
-						Match(COLON);
+						if (!(Precpred(Context, 1))) throw new FailedPredicateException(this, "Precpred(Context, 1)");
 						State = 254;
+						assignment_operator();
+						State = 255;
 						expression(2);
 						}
 						break;
 					case 21:
 						{
-						_localctx = new Expression_assignmentContext(new ExpressionContext(_parentctx, _parentState));
-						PushNewRecursionContext(_localctx, _startState, RULE_expression);
-						State = 256;
-						if (!(Precpred(Context, 1))) throw new FailedPredicateException(this, "Precpred(Context, 1)");
-						State = 257;
-						assignment_operator();
-						State = 258;
-						expression(2);
-						}
-						break;
-					case 22:
-						{
 						_localctx = new Expression_postfix_inc_decContext(new ExpressionContext(_parentctx, _parentState));
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
-						State = 260;
-						if (!(Precpred(Context, 26))) throw new FailedPredicateException(this, "Precpred(Context, 26)");
-						State = 261;
+						State = 257;
+						if (!(Precpred(Context, 25))) throw new FailedPredicateException(this, "Precpred(Context, 25)");
+						State = 258;
 						_la = TokenStream.LA(1);
 						if ( !(_la==INC || _la==DEC) ) {
 						ErrorHandler.RecoverInline(this);
@@ -2245,68 +2489,68 @@ public partial class DialogueScriptParser : Parser {
 						}
 						}
 						break;
-					case 23:
+					case 22:
 						{
 						_localctx = new Expression_postfix_array_accessContext(new ExpressionContext(_parentctx, _parentState));
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
-						State = 262;
-						if (!(Precpred(Context, 25))) throw new FailedPredicateException(this, "Precpred(Context, 25)");
-						State = 263;
+						State = 259;
+						if (!(Precpred(Context, 24))) throw new FailedPredicateException(this, "Precpred(Context, 24)");
+						State = 260;
 						Match(LBRACK);
-						State = 264;
+						State = 261;
 						expression(0);
-						State = 265;
+						State = 262;
 						Match(RBRACK);
+						}
+						break;
+					case 23:
+						{
+						_localctx = new Expression_postfix_invokeContext(new ExpressionContext(_parentctx, _parentState));
+						PushNewRecursionContext(_localctx, _startState, RULE_expression);
+						State = 264;
+						if (!(Precpred(Context, 23))) throw new FailedPredicateException(this, "Precpred(Context, 23)");
+						State = 265;
+						Match(LPAREN);
+						State = 267;
+						ErrorHandler.Sync(this);
+						_la = TokenStream.LA(1);
+						if (((((_la - 23)) & ~0x3f) == 0 && ((1L << (_la - 23)) & 595986841862271L) != 0)) {
+							{
+							State = 266;
+							expression_list();
+							}
+						}
+
+						State = 269;
+						Match(RPAREN);
 						}
 						break;
 					case 24:
 						{
-						_localctx = new Expression_postfix_invokeContext(new ExpressionContext(_parentctx, _parentState));
-						PushNewRecursionContext(_localctx, _startState, RULE_expression);
-						State = 267;
-						if (!(Precpred(Context, 24))) throw new FailedPredicateException(this, "Precpred(Context, 24)");
-						State = 268;
-						Match(LPAREN);
-						State = 270;
-						ErrorHandler.Sync(this);
-						_la = TokenStream.LA(1);
-						if (((((_la - 23)) & ~0x3f) == 0 && ((1L << (_la - 23)) & 1158936795283583L) != 0)) {
-							{
-							State = 269;
-							expression_list();
-							}
-						}
-
-						State = 272;
-						Match(RPAREN);
-						}
-						break;
-					case 25:
-						{
 						_localctx = new Expression_postfix_invoke_asyncContext(new ExpressionContext(_parentctx, _parentState));
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
-						State = 273;
-						if (!(Precpred(Context, 23))) throw new FailedPredicateException(this, "Precpred(Context, 23)");
-						State = 274;
+						State = 270;
+						if (!(Precpred(Context, 22))) throw new FailedPredicateException(this, "Precpred(Context, 22)");
+						State = 271;
 						Match(LBRACE);
-						State = 276;
+						State = 273;
 						ErrorHandler.Sync(this);
 						_la = TokenStream.LA(1);
-						if (((((_la - 23)) & ~0x3f) == 0 && ((1L << (_la - 23)) & 1158936795283583L) != 0)) {
+						if (((((_la - 23)) & ~0x3f) == 0 && ((1L << (_la - 23)) & 595986841862271L) != 0)) {
 							{
-							State = 275;
+							State = 272;
 							expression_list();
 							}
 						}
 
-						State = 278;
+						State = 275;
 						Match(RBRACE);
 						}
 						break;
 					}
 					} 
 				}
-				State = 283;
+				State = 280;
 				ErrorHandler.Sync(this);
 				_alt = Interpreter.AdaptivePredict(TokenStream,19,Context);
 			}
@@ -2350,6 +2594,12 @@ public partial class DialogueScriptParser : Parser {
 			IDialogueScriptParserListener typedListener = listener as IDialogueScriptParserListener;
 			if (typedListener != null) typedListener.ExitAssignment_operator(this);
 		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IDialogueScriptParserVisitor<TResult> typedVisitor = visitor as IDialogueScriptParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitAssignment_operator(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -2360,7 +2610,7 @@ public partial class DialogueScriptParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 284;
+			State = 281;
 			_la = TokenStream.LA(1);
 			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 2250700302057472L) != 0)) ) {
 			ErrorHandler.RecoverInline(this);
@@ -2418,6 +2668,12 @@ public partial class DialogueScriptParser : Parser {
 			IDialogueScriptParserListener typedListener = listener as IDialogueScriptParserListener;
 			if (typedListener != null) typedListener.ExitType(this);
 		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IDialogueScriptParserVisitor<TResult> typedVisitor = visitor as IDialogueScriptParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitType(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -2437,7 +2693,7 @@ public partial class DialogueScriptParser : Parser {
 			int _alt;
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 302;
+			State = 299;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
 			case TYPE_BOOLEAN:
@@ -2457,40 +2713,40 @@ public partial class DialogueScriptParser : Parser {
 			case TYPE_UINT64:
 			case TYPE_STRING:
 				{
-				State = 287;
+				State = 284;
 				primitive_type();
 				}
 				break;
 			case IDENTIFIER:
 				{
-				State = 288;
+				State = 285;
 				name();
-				State = 300;
+				State = 297;
 				ErrorHandler.Sync(this);
 				switch ( Interpreter.AdaptivePredict(TokenStream,21,Context) ) {
 				case 1:
 					{
-					State = 289;
+					State = 286;
 					Match(LT);
-					State = 290;
+					State = 287;
 					type(0);
-					State = 295;
+					State = 292;
 					ErrorHandler.Sync(this);
 					_la = TokenStream.LA(1);
 					while (_la==COMMA) {
 						{
 						{
-						State = 291;
+						State = 288;
 						Match(COMMA);
-						State = 292;
+						State = 289;
 						type(0);
 						}
 						}
-						State = 297;
+						State = 294;
 						ErrorHandler.Sync(this);
 						_la = TokenStream.LA(1);
 					}
-					State = 298;
+					State = 295;
 					Match(GT);
 					}
 					break;
@@ -2501,7 +2757,7 @@ public partial class DialogueScriptParser : Parser {
 				throw new NoViableAltException(this);
 			}
 			Context.Stop = TokenStream.LT(-1);
-			State = 309;
+			State = 306;
 			ErrorHandler.Sync(this);
 			_alt = Interpreter.AdaptivePredict(TokenStream,23,Context);
 			while ( _alt!=2 && _alt!=global::Antlr4.Runtime.Atn.ATN.INVALID_ALT_NUMBER ) {
@@ -2513,16 +2769,16 @@ public partial class DialogueScriptParser : Parser {
 					{
 					_localctx = new TypeContext(_parentctx, _parentState);
 					PushNewRecursionContext(_localctx, _startState, RULE_type);
-					State = 304;
+					State = 301;
 					if (!(Precpred(Context, 2))) throw new FailedPredicateException(this, "Precpred(Context, 2)");
-					State = 305;
+					State = 302;
 					Match(LBRACK);
-					State = 306;
+					State = 303;
 					Match(RBRACK);
 					}
 					} 
 				}
-				State = 311;
+				State = 308;
 				ErrorHandler.Sync(this);
 				_alt = Interpreter.AdaptivePredict(TokenStream,23,Context);
 			}
@@ -2571,6 +2827,12 @@ public partial class DialogueScriptParser : Parser {
 			IDialogueScriptParserListener typedListener = listener as IDialogueScriptParserListener;
 			if (typedListener != null) typedListener.ExitPrimitive_type(this);
 		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IDialogueScriptParserVisitor<TResult> typedVisitor = visitor as IDialogueScriptParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitPrimitive_type(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -2581,7 +2843,7 @@ public partial class DialogueScriptParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 312;
+			State = 309;
 			_la = TokenStream.LA(1);
 			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 131070L) != 0)) ) {
 			ErrorHandler.RecoverInline(this);
@@ -2630,6 +2892,12 @@ public partial class DialogueScriptParser : Parser {
 			IDialogueScriptParserListener typedListener = listener as IDialogueScriptParserListener;
 			if (typedListener != null) typedListener.ExitName(this);
 		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IDialogueScriptParserVisitor<TResult> typedVisitor = visitor as IDialogueScriptParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitName(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -2640,33 +2908,33 @@ public partial class DialogueScriptParser : Parser {
 			int _alt;
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 315;
+			State = 312;
 			ErrorHandler.Sync(this);
 			switch ( Interpreter.AdaptivePredict(TokenStream,24,Context) ) {
 			case 1:
 				{
-				State = 314;
+				State = 311;
 				@namespace();
 				}
 				break;
 			}
-			State = 317;
+			State = 314;
 			Match(IDENTIFIER);
-			State = 322;
+			State = 319;
 			ErrorHandler.Sync(this);
 			_alt = Interpreter.AdaptivePredict(TokenStream,25,Context);
 			while ( _alt!=2 && _alt!=global::Antlr4.Runtime.Atn.ATN.INVALID_ALT_NUMBER ) {
 				if ( _alt==1 ) {
 					{
 					{
-					State = 318;
+					State = 315;
 					Match(DOT);
-					State = 319;
+					State = 316;
 					Match(IDENTIFIER);
 					}
 					} 
 				}
-				State = 324;
+				State = 321;
 				ErrorHandler.Sync(this);
 				_alt = Interpreter.AdaptivePredict(TokenStream,25,Context);
 			}
@@ -2707,6 +2975,12 @@ public partial class DialogueScriptParser : Parser {
 			IDialogueScriptParserListener typedListener = listener as IDialogueScriptParserListener;
 			if (typedListener != null) typedListener.ExitNamespace(this);
 		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IDialogueScriptParserVisitor<TResult> typedVisitor = visitor as IDialogueScriptParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitNamespace(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -2717,23 +2991,23 @@ public partial class DialogueScriptParser : Parser {
 			int _alt;
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 325;
+			State = 322;
 			Match(IDENTIFIER);
-			State = 326;
+			State = 323;
 			Match(COLONCOLON);
-			State = 330;
+			State = 327;
 			ErrorHandler.Sync(this);
 			_alt = Interpreter.AdaptivePredict(TokenStream,26,Context);
 			while ( _alt!=2 && _alt!=global::Antlr4.Runtime.Atn.ATN.INVALID_ALT_NUMBER ) {
 				if ( _alt==1 ) {
 					{
 					{
-					State = 327;
+					State = 324;
 					@namespace();
 					}
 					} 
 				}
-				State = 332;
+				State = 329;
 				ErrorHandler.Sync(this);
 				_alt = Interpreter.AdaptivePredict(TokenStream,26,Context);
 			}
@@ -2774,6 +3048,12 @@ public partial class DialogueScriptParser : Parser {
 			IDialogueScriptParserListener typedListener = listener as IDialogueScriptParserListener;
 			if (typedListener != null) typedListener.ExitFlag_list(this);
 		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IDialogueScriptParserVisitor<TResult> typedVisitor = visitor as IDialogueScriptParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitFlag_list(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -2784,21 +3064,21 @@ public partial class DialogueScriptParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 333;
+			State = 330;
 			Match(IDENTIFIER);
-			State = 338;
+			State = 335;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			while (_la==COMMA) {
 				{
 				{
-				State = 334;
+				State = 331;
 				Match(COMMA);
-				State = 335;
+				State = 332;
 				Match(IDENTIFIER);
 				}
 				}
-				State = 340;
+				State = 337;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 			}
@@ -2837,6 +3117,12 @@ public partial class DialogueScriptParser : Parser {
 			IDialogueScriptParserListener typedListener = listener as IDialogueScriptParserListener;
 			if (typedListener != null) typedListener.ExitLiteral(this);
 		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IDialogueScriptParserVisitor<TResult> typedVisitor = visitor as IDialogueScriptParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitLiteral(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -2847,7 +3133,7 @@ public partial class DialogueScriptParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 341;
+			State = 338;
 			_la = TokenStream.LA(1);
 			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 528482304L) != 0)) ) {
 			ErrorHandler.RecoverInline(this);
@@ -2878,43 +3164,42 @@ public partial class DialogueScriptParser : Parser {
 	}
 	private bool expression_sempred(ExpressionContext _localctx, int predIndex) {
 		switch (predIndex) {
-		case 0: return Precpred(Context, 21);
-		case 1: return Precpred(Context, 20);
-		case 2: return Precpred(Context, 19);
-		case 3: return Precpred(Context, 18);
-		case 4: return Precpred(Context, 17);
-		case 5: return Precpred(Context, 16);
-		case 6: return Precpred(Context, 15);
-		case 7: return Precpred(Context, 14);
-		case 8: return Precpred(Context, 13);
-		case 9: return Precpred(Context, 12);
-		case 10: return Precpred(Context, 11);
-		case 11: return Precpred(Context, 10);
-		case 12: return Precpred(Context, 9);
-		case 13: return Precpred(Context, 8);
-		case 14: return Precpred(Context, 7);
-		case 15: return Precpred(Context, 6);
-		case 16: return Precpred(Context, 5);
-		case 17: return Precpred(Context, 4);
-		case 18: return Precpred(Context, 3);
-		case 19: return Precpred(Context, 2);
-		case 20: return Precpred(Context, 1);
-		case 21: return Precpred(Context, 26);
-		case 22: return Precpred(Context, 25);
-		case 23: return Precpred(Context, 24);
-		case 24: return Precpred(Context, 23);
+		case 0: return Precpred(Context, 20);
+		case 1: return Precpred(Context, 19);
+		case 2: return Precpred(Context, 18);
+		case 3: return Precpred(Context, 17);
+		case 4: return Precpred(Context, 16);
+		case 5: return Precpred(Context, 15);
+		case 6: return Precpred(Context, 14);
+		case 7: return Precpred(Context, 13);
+		case 8: return Precpred(Context, 12);
+		case 9: return Precpred(Context, 11);
+		case 10: return Precpred(Context, 10);
+		case 11: return Precpred(Context, 9);
+		case 12: return Precpred(Context, 8);
+		case 13: return Precpred(Context, 7);
+		case 14: return Precpred(Context, 6);
+		case 15: return Precpred(Context, 5);
+		case 16: return Precpred(Context, 4);
+		case 17: return Precpred(Context, 3);
+		case 18: return Precpred(Context, 2);
+		case 19: return Precpred(Context, 1);
+		case 20: return Precpred(Context, 25);
+		case 21: return Precpred(Context, 24);
+		case 22: return Precpred(Context, 23);
+		case 23: return Precpred(Context, 22);
 		}
 		return true;
 	}
 	private bool type_sempred(TypeContext _localctx, int predIndex) {
 		switch (predIndex) {
-		case 25: return Precpred(Context, 2);
+		case 24: return Precpred(Context, 2);
 		}
 		return true;
 	}
 
 	private static int[] _serializedATN = {
-		4,1,76,344,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,6,2,7,
+		4,1,75,341,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,6,2,7,
 		7,7,2,8,7,8,2,9,7,9,2,10,7,10,2,11,7,11,2,12,7,12,2,13,7,13,2,14,7,14,
 		2,15,7,15,2,16,7,16,2,17,7,17,2,18,7,18,2,19,7,19,2,20,7,20,2,21,7,21,
 		2,22,7,22,2,23,7,23,2,24,7,24,2,25,7,25,1,0,5,0,54,8,0,10,0,12,0,57,9,
@@ -2933,103 +3218,102 @@ public partial class DialogueScriptParser : Parser {
 		1,18,1,18,1,18,1,18,1,18,1,18,1,18,1,18,1,18,1,18,1,18,1,18,1,18,1,18,
 		1,18,1,18,1,18,1,18,1,18,1,18,1,18,1,18,1,18,1,18,1,18,1,18,1,18,1,18,
 		1,18,1,18,1,18,1,18,1,18,1,18,1,18,1,18,1,18,1,18,1,18,1,18,1,18,1,18,
-		1,18,1,18,1,18,1,18,1,18,1,18,1,18,1,18,3,18,271,8,18,1,18,1,18,1,18,1,
-		18,3,18,277,8,18,1,18,5,18,280,8,18,10,18,12,18,283,9,18,1,19,1,19,1,20,
-		1,20,1,20,1,20,1,20,1,20,1,20,5,20,294,8,20,10,20,12,20,297,9,20,1,20,
-		1,20,3,20,301,8,20,3,20,303,8,20,1,20,1,20,1,20,5,20,308,8,20,10,20,12,
-		20,311,9,20,1,21,1,21,1,22,3,22,316,8,22,1,22,1,22,1,22,5,22,321,8,22,
-		10,22,12,22,324,9,22,1,23,1,23,1,23,5,23,329,8,23,10,23,12,23,332,9,23,
-		1,24,1,24,1,24,5,24,337,8,24,10,24,12,24,340,9,24,1,25,1,25,1,25,0,2,36,
-		40,26,0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36,38,40,42,44,
-		46,48,50,0,4,1,0,64,65,1,0,40,50,1,0,1,16,1,0,23,28,379,0,55,1,0,0,0,2,
-		60,1,0,0,0,4,64,1,0,0,0,6,70,1,0,0,0,8,79,1,0,0,0,10,88,1,0,0,0,12,90,
-		1,0,0,0,14,97,1,0,0,0,16,101,1,0,0,0,18,104,1,0,0,0,20,113,1,0,0,0,22,
-		119,1,0,0,0,24,145,1,0,0,0,26,147,1,0,0,0,28,151,1,0,0,0,30,156,1,0,0,
-		0,32,158,1,0,0,0,34,161,1,0,0,0,36,189,1,0,0,0,38,284,1,0,0,0,40,302,1,
-		0,0,0,42,312,1,0,0,0,44,315,1,0,0,0,46,325,1,0,0,0,48,333,1,0,0,0,50,341,
-		1,0,0,0,52,54,3,2,1,0,53,52,1,0,0,0,54,57,1,0,0,0,55,53,1,0,0,0,55,56,
-		1,0,0,0,56,58,1,0,0,0,57,55,1,0,0,0,58,59,5,0,0,1,59,1,1,0,0,0,60,61,3,
-		4,2,0,61,62,3,8,4,0,62,63,3,6,3,0,63,3,1,0,0,0,64,66,5,52,0,0,65,67,3,
-		48,24,0,66,65,1,0,0,0,66,67,1,0,0,0,67,68,1,0,0,0,68,69,5,52,0,0,69,5,
-		1,0,0,0,70,72,5,51,0,0,71,73,3,48,24,0,72,71,1,0,0,0,72,73,1,0,0,0,73,
-		74,1,0,0,0,74,75,5,51,0,0,75,7,1,0,0,0,76,78,3,10,5,0,77,76,1,0,0,0,78,
-		81,1,0,0,0,79,77,1,0,0,0,79,80,1,0,0,0,80,9,1,0,0,0,81,79,1,0,0,0,82,89,
-		3,18,9,0,83,89,3,20,10,0,84,89,3,12,6,0,85,89,3,16,8,0,86,89,3,26,13,0,
-		87,89,3,32,16,0,88,82,1,0,0,0,88,83,1,0,0,0,88,84,1,0,0,0,88,85,1,0,0,
-		0,88,86,1,0,0,0,88,87,1,0,0,0,89,11,1,0,0,0,90,92,5,31,0,0,91,93,3,14,
-		7,0,92,91,1,0,0,0,92,93,1,0,0,0,93,94,1,0,0,0,94,95,5,32,0,0,95,13,1,0,
-		0,0,96,98,3,10,5,0,97,96,1,0,0,0,98,99,1,0,0,0,99,97,1,0,0,0,99,100,1,
-		0,0,0,100,15,1,0,0,0,101,102,3,36,18,0,102,103,5,35,0,0,103,17,1,0,0,0,
-		104,105,5,20,0,0,105,106,5,29,0,0,106,107,3,36,18,0,107,108,5,30,0,0,108,
-		111,3,10,5,0,109,110,5,21,0,0,110,112,3,10,5,0,111,109,1,0,0,0,111,112,
-		1,0,0,0,112,19,1,0,0,0,113,114,5,22,0,0,114,115,5,29,0,0,115,116,3,36,
-		18,0,116,117,5,30,0,0,117,118,3,22,11,0,118,21,1,0,0,0,119,123,5,31,0,
-		0,120,122,3,24,12,0,121,120,1,0,0,0,122,125,1,0,0,0,123,121,1,0,0,0,123,
-		124,1,0,0,0,124,126,1,0,0,0,125,123,1,0,0,0,126,127,5,32,0,0,127,23,1,
-		0,0,0,128,129,5,18,0,0,129,130,3,36,18,0,130,134,5,38,0,0,131,133,3,10,
-		5,0,132,131,1,0,0,0,133,136,1,0,0,0,134,132,1,0,0,0,134,135,1,0,0,0,135,
-		146,1,0,0,0,136,134,1,0,0,0,137,138,5,19,0,0,138,142,5,38,0,0,139,141,
-		3,10,5,0,140,139,1,0,0,0,141,144,1,0,0,0,142,140,1,0,0,0,142,143,1,0,0,
-		0,143,146,1,0,0,0,144,142,1,0,0,0,145,128,1,0,0,0,145,137,1,0,0,0,146,
-		25,1,0,0,0,147,148,3,40,20,0,148,149,3,28,14,0,149,150,5,35,0,0,150,27,
-		1,0,0,0,151,154,3,30,15,0,152,153,5,40,0,0,153,155,3,36,18,0,154,152,1,
-		0,0,0,154,155,1,0,0,0,155,29,1,0,0,0,156,157,5,73,0,0,157,31,1,0,0,0,158,
-		159,5,17,0,0,159,160,5,35,0,0,160,33,1,0,0,0,161,166,3,36,18,0,162,163,
-		5,36,0,0,163,165,3,36,18,0,164,162,1,0,0,0,165,168,1,0,0,0,166,164,1,0,
-		0,0,166,167,1,0,0,0,167,35,1,0,0,0,168,166,1,0,0,0,169,170,6,18,-1,0,170,
-		190,3,44,22,0,171,190,3,50,25,0,172,173,5,29,0,0,173,174,3,36,18,0,174,
-		175,5,30,0,0,175,190,1,0,0,0,176,187,5,67,0,0,177,187,5,66,0,0,178,187,
-		5,57,0,0,179,187,5,58,0,0,180,187,5,65,0,0,181,187,5,64,0,0,182,183,5,
-		29,0,0,183,184,3,40,20,0,184,185,5,30,0,0,185,187,1,0,0,0,186,176,1,0,
-		0,0,186,177,1,0,0,0,186,178,1,0,0,0,186,179,1,0,0,0,186,180,1,0,0,0,186,
-		181,1,0,0,0,186,182,1,0,0,0,187,188,1,0,0,0,188,190,3,36,18,22,189,169,
-		1,0,0,0,189,171,1,0,0,0,189,172,1,0,0,0,189,186,1,0,0,0,190,281,1,0,0,
-		0,191,192,10,21,0,0,192,193,5,71,0,0,193,280,3,36,18,22,194,195,10,20,
-		0,0,195,196,5,68,0,0,196,280,3,36,18,21,197,198,10,19,0,0,198,199,5,69,
-		0,0,199,280,3,36,18,20,200,201,10,18,0,0,201,202,5,70,0,0,202,280,3,36,
-		18,19,203,204,10,17,0,0,204,205,5,66,0,0,205,280,3,36,18,18,206,207,10,
-		16,0,0,207,208,5,67,0,0,208,280,3,36,18,17,209,210,10,15,0,0,210,211,5,
-		52,0,0,211,212,5,52,0,0,212,280,3,36,18,16,213,214,10,14,0,0,214,215,5,
-		51,0,0,215,216,5,51,0,0,216,280,3,36,18,15,217,218,10,13,0,0,218,219,5,
-		52,0,0,219,280,3,36,18,14,220,221,10,12,0,0,221,222,5,51,0,0,222,280,3,
-		36,18,13,223,224,10,11,0,0,224,225,5,54,0,0,225,280,3,36,18,12,226,227,
-		10,10,0,0,227,228,5,55,0,0,228,280,3,36,18,11,229,230,10,9,0,0,230,231,
-		5,53,0,0,231,280,3,36,18,10,232,233,10,8,0,0,233,234,5,56,0,0,234,280,
-		3,36,18,9,235,236,10,7,0,0,236,237,5,59,0,0,237,280,3,36,18,8,238,239,
-		10,6,0,0,239,240,5,60,0,0,240,280,3,36,18,7,241,242,10,5,0,0,242,243,5,
-		61,0,0,243,280,3,36,18,6,244,245,10,4,0,0,245,246,5,62,0,0,246,280,3,36,
-		18,5,247,248,10,3,0,0,248,249,5,63,0,0,249,280,3,36,18,4,250,251,10,2,
-		0,0,251,252,5,72,0,0,252,253,3,36,18,0,253,254,5,38,0,0,254,255,3,36,18,
-		2,255,280,1,0,0,0,256,257,10,1,0,0,257,258,3,38,19,0,258,259,3,36,18,2,
-		259,280,1,0,0,0,260,261,10,26,0,0,261,280,7,0,0,0,262,263,10,25,0,0,263,
-		264,5,33,0,0,264,265,3,36,18,0,265,266,5,34,0,0,266,280,1,0,0,0,267,268,
-		10,24,0,0,268,270,5,29,0,0,269,271,3,34,17,0,270,269,1,0,0,0,270,271,1,
-		0,0,0,271,272,1,0,0,0,272,280,5,30,0,0,273,274,10,23,0,0,274,276,5,31,
-		0,0,275,277,3,34,17,0,276,275,1,0,0,0,276,277,1,0,0,0,277,278,1,0,0,0,
-		278,280,5,32,0,0,279,191,1,0,0,0,279,194,1,0,0,0,279,197,1,0,0,0,279,200,
-		1,0,0,0,279,203,1,0,0,0,279,206,1,0,0,0,279,209,1,0,0,0,279,213,1,0,0,
-		0,279,217,1,0,0,0,279,220,1,0,0,0,279,223,1,0,0,0,279,226,1,0,0,0,279,
-		229,1,0,0,0,279,232,1,0,0,0,279,235,1,0,0,0,279,238,1,0,0,0,279,241,1,
-		0,0,0,279,244,1,0,0,0,279,247,1,0,0,0,279,250,1,0,0,0,279,256,1,0,0,0,
-		279,260,1,0,0,0,279,262,1,0,0,0,279,267,1,0,0,0,279,273,1,0,0,0,280,283,
-		1,0,0,0,281,279,1,0,0,0,281,282,1,0,0,0,282,37,1,0,0,0,283,281,1,0,0,0,
-		284,285,7,1,0,0,285,39,1,0,0,0,286,287,6,20,-1,0,287,303,3,42,21,0,288,
-		300,3,44,22,0,289,290,5,52,0,0,290,295,3,40,20,0,291,292,5,36,0,0,292,
-		294,3,40,20,0,293,291,1,0,0,0,294,297,1,0,0,0,295,293,1,0,0,0,295,296,
-		1,0,0,0,296,298,1,0,0,0,297,295,1,0,0,0,298,299,5,51,0,0,299,301,1,0,0,
-		0,300,289,1,0,0,0,300,301,1,0,0,0,301,303,1,0,0,0,302,286,1,0,0,0,302,
-		288,1,0,0,0,303,309,1,0,0,0,304,305,10,2,0,0,305,306,5,33,0,0,306,308,
-		5,34,0,0,307,304,1,0,0,0,308,311,1,0,0,0,309,307,1,0,0,0,309,310,1,0,0,
-		0,310,41,1,0,0,0,311,309,1,0,0,0,312,313,7,2,0,0,313,43,1,0,0,0,314,316,
-		3,46,23,0,315,314,1,0,0,0,315,316,1,0,0,0,316,317,1,0,0,0,317,322,5,73,
-		0,0,318,319,5,37,0,0,319,321,5,73,0,0,320,318,1,0,0,0,321,324,1,0,0,0,
-		322,320,1,0,0,0,322,323,1,0,0,0,323,45,1,0,0,0,324,322,1,0,0,0,325,326,
-		5,73,0,0,326,330,5,39,0,0,327,329,3,46,23,0,328,327,1,0,0,0,329,332,1,
-		0,0,0,330,328,1,0,0,0,330,331,1,0,0,0,331,47,1,0,0,0,332,330,1,0,0,0,333,
-		338,5,73,0,0,334,335,5,36,0,0,335,337,5,73,0,0,336,334,1,0,0,0,337,340,
-		1,0,0,0,338,336,1,0,0,0,338,339,1,0,0,0,339,49,1,0,0,0,340,338,1,0,0,0,
-		341,342,7,3,0,0,342,51,1,0,0,0,28,55,66,72,79,88,92,99,111,123,134,142,
-		145,154,166,186,189,270,276,279,281,295,300,302,309,315,322,330,338
+		1,18,1,18,1,18,1,18,1,18,3,18,268,8,18,1,18,1,18,1,18,1,18,3,18,274,8,
+		18,1,18,5,18,277,8,18,10,18,12,18,280,9,18,1,19,1,19,1,20,1,20,1,20,1,
+		20,1,20,1,20,1,20,5,20,291,8,20,10,20,12,20,294,9,20,1,20,1,20,3,20,298,
+		8,20,3,20,300,8,20,1,20,1,20,1,20,5,20,305,8,20,10,20,12,20,308,9,20,1,
+		21,1,21,1,22,3,22,313,8,22,1,22,1,22,1,22,5,22,318,8,22,10,22,12,22,321,
+		9,22,1,23,1,23,1,23,5,23,326,8,23,10,23,12,23,329,9,23,1,24,1,24,1,24,
+		5,24,334,8,24,10,24,12,24,337,9,24,1,25,1,25,1,25,0,2,36,40,26,0,2,4,6,
+		8,10,12,14,16,18,20,22,24,26,28,30,32,34,36,38,40,42,44,46,48,50,0,4,1,
+		0,64,65,1,0,40,50,1,0,1,16,1,0,23,28,375,0,55,1,0,0,0,2,60,1,0,0,0,4,64,
+		1,0,0,0,6,70,1,0,0,0,8,79,1,0,0,0,10,88,1,0,0,0,12,90,1,0,0,0,14,97,1,
+		0,0,0,16,101,1,0,0,0,18,104,1,0,0,0,20,113,1,0,0,0,22,119,1,0,0,0,24,145,
+		1,0,0,0,26,147,1,0,0,0,28,151,1,0,0,0,30,156,1,0,0,0,32,158,1,0,0,0,34,
+		161,1,0,0,0,36,189,1,0,0,0,38,281,1,0,0,0,40,299,1,0,0,0,42,309,1,0,0,
+		0,44,312,1,0,0,0,46,322,1,0,0,0,48,330,1,0,0,0,50,338,1,0,0,0,52,54,3,
+		2,1,0,53,52,1,0,0,0,54,57,1,0,0,0,55,53,1,0,0,0,55,56,1,0,0,0,56,58,1,
+		0,0,0,57,55,1,0,0,0,58,59,5,0,0,1,59,1,1,0,0,0,60,61,3,4,2,0,61,62,3,8,
+		4,0,62,63,3,6,3,0,63,3,1,0,0,0,64,66,5,52,0,0,65,67,3,48,24,0,66,65,1,
+		0,0,0,66,67,1,0,0,0,67,68,1,0,0,0,68,69,5,52,0,0,69,5,1,0,0,0,70,72,5,
+		51,0,0,71,73,3,48,24,0,72,71,1,0,0,0,72,73,1,0,0,0,73,74,1,0,0,0,74,75,
+		5,51,0,0,75,7,1,0,0,0,76,78,3,10,5,0,77,76,1,0,0,0,78,81,1,0,0,0,79,77,
+		1,0,0,0,79,80,1,0,0,0,80,9,1,0,0,0,81,79,1,0,0,0,82,89,3,18,9,0,83,89,
+		3,20,10,0,84,89,3,12,6,0,85,89,3,16,8,0,86,89,3,26,13,0,87,89,3,32,16,
+		0,88,82,1,0,0,0,88,83,1,0,0,0,88,84,1,0,0,0,88,85,1,0,0,0,88,86,1,0,0,
+		0,88,87,1,0,0,0,89,11,1,0,0,0,90,92,5,31,0,0,91,93,3,14,7,0,92,91,1,0,
+		0,0,92,93,1,0,0,0,93,94,1,0,0,0,94,95,5,32,0,0,95,13,1,0,0,0,96,98,3,10,
+		5,0,97,96,1,0,0,0,98,99,1,0,0,0,99,97,1,0,0,0,99,100,1,0,0,0,100,15,1,
+		0,0,0,101,102,3,36,18,0,102,103,5,35,0,0,103,17,1,0,0,0,104,105,5,20,0,
+		0,105,106,5,29,0,0,106,107,3,36,18,0,107,108,5,30,0,0,108,111,3,10,5,0,
+		109,110,5,21,0,0,110,112,3,10,5,0,111,109,1,0,0,0,111,112,1,0,0,0,112,
+		19,1,0,0,0,113,114,5,22,0,0,114,115,5,29,0,0,115,116,3,36,18,0,116,117,
+		5,30,0,0,117,118,3,22,11,0,118,21,1,0,0,0,119,123,5,31,0,0,120,122,3,24,
+		12,0,121,120,1,0,0,0,122,125,1,0,0,0,123,121,1,0,0,0,123,124,1,0,0,0,124,
+		126,1,0,0,0,125,123,1,0,0,0,126,127,5,32,0,0,127,23,1,0,0,0,128,129,5,
+		18,0,0,129,130,3,36,18,0,130,134,5,38,0,0,131,133,3,10,5,0,132,131,1,0,
+		0,0,133,136,1,0,0,0,134,132,1,0,0,0,134,135,1,0,0,0,135,146,1,0,0,0,136,
+		134,1,0,0,0,137,138,5,19,0,0,138,142,5,38,0,0,139,141,3,10,5,0,140,139,
+		1,0,0,0,141,144,1,0,0,0,142,140,1,0,0,0,142,143,1,0,0,0,143,146,1,0,0,
+		0,144,142,1,0,0,0,145,128,1,0,0,0,145,137,1,0,0,0,146,25,1,0,0,0,147,148,
+		3,40,20,0,148,149,3,28,14,0,149,150,5,35,0,0,150,27,1,0,0,0,151,154,3,
+		30,15,0,152,153,5,40,0,0,153,155,3,36,18,0,154,152,1,0,0,0,154,155,1,0,
+		0,0,155,29,1,0,0,0,156,157,5,72,0,0,157,31,1,0,0,0,158,159,5,17,0,0,159,
+		160,5,35,0,0,160,33,1,0,0,0,161,166,3,36,18,0,162,163,5,36,0,0,163,165,
+		3,36,18,0,164,162,1,0,0,0,165,168,1,0,0,0,166,164,1,0,0,0,166,167,1,0,
+		0,0,167,35,1,0,0,0,168,166,1,0,0,0,169,170,6,18,-1,0,170,190,3,44,22,0,
+		171,190,3,50,25,0,172,173,5,29,0,0,173,174,3,36,18,0,174,175,5,30,0,0,
+		175,190,1,0,0,0,176,187,5,67,0,0,177,187,5,66,0,0,178,187,5,57,0,0,179,
+		187,5,58,0,0,180,187,5,65,0,0,181,187,5,64,0,0,182,183,5,29,0,0,183,184,
+		3,40,20,0,184,185,5,30,0,0,185,187,1,0,0,0,186,176,1,0,0,0,186,177,1,0,
+		0,0,186,178,1,0,0,0,186,179,1,0,0,0,186,180,1,0,0,0,186,181,1,0,0,0,186,
+		182,1,0,0,0,187,188,1,0,0,0,188,190,3,36,18,21,189,169,1,0,0,0,189,171,
+		1,0,0,0,189,172,1,0,0,0,189,186,1,0,0,0,190,278,1,0,0,0,191,192,10,20,
+		0,0,192,193,5,68,0,0,193,277,3,36,18,21,194,195,10,19,0,0,195,196,5,69,
+		0,0,196,277,3,36,18,20,197,198,10,18,0,0,198,199,5,70,0,0,199,277,3,36,
+		18,19,200,201,10,17,0,0,201,202,5,66,0,0,202,277,3,36,18,18,203,204,10,
+		16,0,0,204,205,5,67,0,0,205,277,3,36,18,17,206,207,10,15,0,0,207,208,5,
+		52,0,0,208,209,5,52,0,0,209,277,3,36,18,16,210,211,10,14,0,0,211,212,5,
+		51,0,0,212,213,5,51,0,0,213,277,3,36,18,15,214,215,10,13,0,0,215,216,5,
+		52,0,0,216,277,3,36,18,14,217,218,10,12,0,0,218,219,5,51,0,0,219,277,3,
+		36,18,13,220,221,10,11,0,0,221,222,5,54,0,0,222,277,3,36,18,12,223,224,
+		10,10,0,0,224,225,5,55,0,0,225,277,3,36,18,11,226,227,10,9,0,0,227,228,
+		5,53,0,0,228,277,3,36,18,10,229,230,10,8,0,0,230,231,5,56,0,0,231,277,
+		3,36,18,9,232,233,10,7,0,0,233,234,5,59,0,0,234,277,3,36,18,8,235,236,
+		10,6,0,0,236,237,5,60,0,0,237,277,3,36,18,7,238,239,10,5,0,0,239,240,5,
+		61,0,0,240,277,3,36,18,6,241,242,10,4,0,0,242,243,5,62,0,0,243,277,3,36,
+		18,5,244,245,10,3,0,0,245,246,5,63,0,0,246,277,3,36,18,4,247,248,10,2,
+		0,0,248,249,5,71,0,0,249,250,3,36,18,0,250,251,5,38,0,0,251,252,3,36,18,
+		2,252,277,1,0,0,0,253,254,10,1,0,0,254,255,3,38,19,0,255,256,3,36,18,2,
+		256,277,1,0,0,0,257,258,10,25,0,0,258,277,7,0,0,0,259,260,10,24,0,0,260,
+		261,5,33,0,0,261,262,3,36,18,0,262,263,5,34,0,0,263,277,1,0,0,0,264,265,
+		10,23,0,0,265,267,5,29,0,0,266,268,3,34,17,0,267,266,1,0,0,0,267,268,1,
+		0,0,0,268,269,1,0,0,0,269,277,5,30,0,0,270,271,10,22,0,0,271,273,5,31,
+		0,0,272,274,3,34,17,0,273,272,1,0,0,0,273,274,1,0,0,0,274,275,1,0,0,0,
+		275,277,5,32,0,0,276,191,1,0,0,0,276,194,1,0,0,0,276,197,1,0,0,0,276,200,
+		1,0,0,0,276,203,1,0,0,0,276,206,1,0,0,0,276,210,1,0,0,0,276,214,1,0,0,
+		0,276,217,1,0,0,0,276,220,1,0,0,0,276,223,1,0,0,0,276,226,1,0,0,0,276,
+		229,1,0,0,0,276,232,1,0,0,0,276,235,1,0,0,0,276,238,1,0,0,0,276,241,1,
+		0,0,0,276,244,1,0,0,0,276,247,1,0,0,0,276,253,1,0,0,0,276,257,1,0,0,0,
+		276,259,1,0,0,0,276,264,1,0,0,0,276,270,1,0,0,0,277,280,1,0,0,0,278,276,
+		1,0,0,0,278,279,1,0,0,0,279,37,1,0,0,0,280,278,1,0,0,0,281,282,7,1,0,0,
+		282,39,1,0,0,0,283,284,6,20,-1,0,284,300,3,42,21,0,285,297,3,44,22,0,286,
+		287,5,52,0,0,287,292,3,40,20,0,288,289,5,36,0,0,289,291,3,40,20,0,290,
+		288,1,0,0,0,291,294,1,0,0,0,292,290,1,0,0,0,292,293,1,0,0,0,293,295,1,
+		0,0,0,294,292,1,0,0,0,295,296,5,51,0,0,296,298,1,0,0,0,297,286,1,0,0,0,
+		297,298,1,0,0,0,298,300,1,0,0,0,299,283,1,0,0,0,299,285,1,0,0,0,300,306,
+		1,0,0,0,301,302,10,2,0,0,302,303,5,33,0,0,303,305,5,34,0,0,304,301,1,0,
+		0,0,305,308,1,0,0,0,306,304,1,0,0,0,306,307,1,0,0,0,307,41,1,0,0,0,308,
+		306,1,0,0,0,309,310,7,2,0,0,310,43,1,0,0,0,311,313,3,46,23,0,312,311,1,
+		0,0,0,312,313,1,0,0,0,313,314,1,0,0,0,314,319,5,72,0,0,315,316,5,37,0,
+		0,316,318,5,72,0,0,317,315,1,0,0,0,318,321,1,0,0,0,319,317,1,0,0,0,319,
+		320,1,0,0,0,320,45,1,0,0,0,321,319,1,0,0,0,322,323,5,72,0,0,323,327,5,
+		39,0,0,324,326,3,46,23,0,325,324,1,0,0,0,326,329,1,0,0,0,327,325,1,0,0,
+		0,327,328,1,0,0,0,328,47,1,0,0,0,329,327,1,0,0,0,330,335,5,72,0,0,331,
+		332,5,36,0,0,332,334,5,72,0,0,333,331,1,0,0,0,334,337,1,0,0,0,335,333,
+		1,0,0,0,335,336,1,0,0,0,336,49,1,0,0,0,337,335,1,0,0,0,338,339,7,3,0,0,
+		339,51,1,0,0,0,28,55,66,72,79,88,92,99,111,123,134,142,145,154,166,186,
+		189,267,273,276,278,292,297,299,306,312,319,327,335
 	};
 
 	public static readonly ATN _ATN =

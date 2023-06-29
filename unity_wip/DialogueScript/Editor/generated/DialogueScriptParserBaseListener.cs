@@ -266,20 +266,6 @@ public partial class DialogueScriptParserBaseListener : IDialogueScriptParserLis
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitExpression_bitwise_or([NotNull] DialogueScriptParser.Expression_bitwise_orContext context) { }
 	/// <summary>
-	/// Enter a parse tree produced by the <c>expression_concat</c>
-	/// labeled alternative in <see cref="DialogueScriptParser.expression"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void EnterExpression_concat([NotNull] DialogueScriptParser.Expression_concatContext context) { }
-	/// <summary>
-	/// Exit a parse tree produced by the <c>expression_concat</c>
-	/// labeled alternative in <see cref="DialogueScriptParser.expression"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void ExitExpression_concat([NotNull] DialogueScriptParser.Expression_concatContext context) { }
-	/// <summary>
 	/// Enter a parse tree produced by the <c>expression_bitwise_and</c>
 	/// labeled alternative in <see cref="DialogueScriptParser.expression"/>.
 	/// <para>The default implementation does nothing.</para>

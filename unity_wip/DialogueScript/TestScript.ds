@@ -1,7 +1,7 @@
 <flag1,flag2<
-    Test();
+    TestNamespace::TestScriptHelpers.Best();
 >a1>
 
 <a1<
-    Best();
+    TestNamespace::TestScriptHelpers.Test();
 >>

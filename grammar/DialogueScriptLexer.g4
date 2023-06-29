@@ -132,7 +132,6 @@ SUB: '-';
 MUL: '*';
 DIV: '/';
 MOD: '%';
-CONCAT: '..';
 
 TERNARY: '?';
 

@@ -14,6 +14,7 @@ namespace DialogueScript.Editor
             // Class and namespace name
             string testNamespaceName = "TestNamespace";
             string testClassName = "TestClass";
+            string testScriptName = "TestScript";
 
             // Grab file paths
             string testDirectory = Path.Combine(Application.dataPath, "DialogueScript");
@@ -22,7 +23,7 @@ namespace DialogueScript.Editor
             if (!File.Exists(testFilePath)) Debug.LogError("Could not find test_script.ds");
 
             // Generate script
-            GenerateScript(testFilePath, testScriptPath, testNamespaceName, testClassName, 0);
+            GenerateScript(testFilePath, testScriptPath, testNamespaceName, testClassName, testScriptName, 0);
         }
 
         [MenuItem("DialogueScript/Execute Test Script")]
@@ -35,7 +36,7 @@ namespace DialogueScript.Editor
         }
 
         private static void GenerateScript(string dialogueScriptSourcePath, string generatedCodePath,
-            string namespaceName, string className, int scriptId)
+            string namespaceName, string className, string scriptName, int scriptId)
         {
             // Read test file and generate C# from DialogueScript
             string testFileString = File.ReadAllText(dialogueScriptSourcePath);
@@ -49,14 +50,16 @@ namespace DialogueScript.Editor
                 BuildParseTree = true,
                 ErrorHandler = new BailErrorStrategy(),
             };
-            IParseTree tree = parser.script();
+            DialogueScriptParser.ScriptContext tree = parser.script();
 
             // Visit the Tree
-            TranspilerListener listener = new(namespaceName, className, scriptId);
-            ParseTreeWalker.Default.Walk(listener, tree);
+            // TranspilerListener listener = new(namespaceName, className, scriptName, scriptId);
+            // ParseTreeWalker.Default.Walk(listener, tree);
+            string dialogueScript = DialogueScriptTranspilingTreeWalker.WalkScript(
+                tree, namespaceName, className, scriptName, scriptId);
 
             // Create New Script
-            string dialogueScript = listener.ToString();
+            // string dialogueScript = listener.ToString();
             File.WriteAllText(generatedCodePath, dialogueScript);
             AssetDatabase.Refresh();
         }

@@ -12,18 +12,23 @@ namespace DialogueScript.Editor
         public static void GenerateTestScript()
         {
             // Class and namespace name
-            string testNamespaceName = "TestNamespace";
             string testClassName = "TestClass";
             string testScriptName = "TestScript";
+            int testScriptId = 0;
 
             // Grab file paths
             string testDirectory = Path.Combine(Application.dataPath, "DialogueScript");
             string testFilePath = Path.Combine(testDirectory, "TestScript.ds");
-            string testScriptPath = Path.Combine(testDirectory, "Generated", "TestScript.cs");
+            string testScriptPath = Path.Combine(testDirectory, "generated", "TestScript.cs");
+            string testFlagPath = Path.Combine(testDirectory, "generated", "Flag.cs");
             if (!File.Exists(testFilePath)) Debug.LogError("Could not find test_script.ds");
 
+            // Create flag cache
+            FlagCache flagCache = new(testFlagPath);
+
             // Generate script
-            GenerateScript(testFilePath, testScriptPath, testNamespaceName, testClassName, testScriptName, 0);
+            GenerateScript(flagCache, testFilePath, testScriptPath, testClassName, testScriptName,
+                testScriptId);
         }
 
         [MenuItem("DialogueScript/Execute Test Script")]
@@ -35,8 +40,8 @@ namespace DialogueScript.Editor
             // TODO - Execute a test script
         }
 
-        private static void GenerateScript(string dialogueScriptSourcePath, string generatedCodePath,
-            string namespaceName, string className, string scriptName, int scriptId)
+        private static void GenerateScript(FlagCache flagCache, string dialogueScriptSourcePath,
+            string generatedCodePath, string className, string scriptName, int scriptId)
         {
             // Read test file and generate C# from DialogueScript
             string testFileString = File.ReadAllText(dialogueScriptSourcePath);
@@ -53,14 +58,16 @@ namespace DialogueScript.Editor
             DialogueScriptParser.ScriptContext tree = parser.script();
 
             // Visit the Tree
-            // TranspilerListener listener = new(namespaceName, className, scriptName, scriptId);
-            // ParseTreeWalker.Default.Walk(listener, tree);
-            string dialogueScript = DialogueScriptTranspilingTreeWalker.WalkScript(
-                tree, namespaceName, className, scriptName, scriptId);
+            string dialogueScript = TranspilingTreeWalker.WalkScript(
+                tree, flagCache, className, scriptName, scriptId);
 
             // Create New Script
-            // string dialogueScript = listener.ToString();
             File.WriteAllText(generatedCodePath, dialogueScript);
+
+            // Write Flag Cache
+            flagCache.GenerateFlags();
+
+            // Refresh asset database
             AssetDatabase.Refresh();
         }
     }

@@ -1,12 +1,12 @@
-namespace TestNamespace
+namespace DialogueScript
 {
-    public static class TestScriptHelpers
+    public static partial class Functions
     {
-        public static void Best()
+        static void Best()
         {
         }
 
-        public static void Test()
+        static void Test()
         {
 
         }

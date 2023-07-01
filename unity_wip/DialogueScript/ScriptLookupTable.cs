@@ -24,6 +24,7 @@ namespace DialogueScript
             s_ScriptNameToId = new();
 
             // Find all scripts
+            // TODO - only search specific namespace
             Type scriptInterfaceType = typeof(Script);
             Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
             foreach (Assembly assembly in assemblies)

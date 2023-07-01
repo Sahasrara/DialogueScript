@@ -1,48 +1,44 @@
 // DO NOT EDIT MANUALLY
-// Generated Wednesday, 28 June 2023 20:19:22
+// Generated Saturday, 01 July 2023 13:01:49
 // DO NOT EDIT MANUALLY
-using DialogueScript;
-
-namespace TestNamespace
+namespace DialogueScript
 {
-    public struct TestClass : Script
+    public static partial class Functions
     {
-        // Flag Map: ID - Name
-        // 0 - flag1
-        // 1 - flag2
-        // 2 - a1
-        public static int FlagCount() => 3;
-        public static int ScriptId() => 0;
-        public static string ScriptName() => "TestScript";
-        public void Tick(ExecutionContext context)
+        public struct TestClass : Script
         {
-            do
+            public static int ScriptId() => 0;
+            public static string ScriptName() => "TestScript";
+            public void Tick(ExecutionContext context)
             {
-                // Reset flag set alarm
-                context.ResetFlagSetAlarm();
-                // Scheduled Block - 0
-                if (!context.IsBlockExecuted(0) && context.IsFlagSet(0) && context.IsFlagSet(1))
+                do
                 {
-                    Block0(context);
-                }
+                    // Reset flag set alarm
+                    context.ResetFlagSetAlarm();
+                    // Scheduled Block - 0
+                    if (!context.IsBlockExecuted(0) && context.IsFlagSet(Flag.flag1) && context.IsFlagSet(Flag.flag2))
+                    {
+                        Block0(context);
+                    }
 
-                // Scheduled Block - 1
-                if (!context.IsBlockExecuted(1) && context.IsFlagSet(2))
-                {
-                    Block1(context);
+                    // Scheduled Block - 1
+                    if (!context.IsBlockExecuted(1) && context.IsFlagSet(Flag.a1))
+                    {
+                        Block1(context);
+                    }
                 }
+                while (context.IsFlagSetAlarmTriggered());
             }
-            while (context.IsFlagSetAlarmTriggered());
-        }
 
-        private void Block0(ExecutionContext context)
-        {
-            TestNamespace.TestScriptHelpers.Best();
-        }
+            private void Block0(ExecutionContext context)
+            {
+                Best();
+            }
 
-        private void Block1(ExecutionContext context)
-        {
-            TestNamespace.TestScriptHelpers.Test();
+            private void Block1(ExecutionContext context)
+            {
+                Test();
+            }
         }
     }
 }

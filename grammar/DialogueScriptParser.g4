@@ -150,10 +150,7 @@ primitive_type
     ;
 
 // Name
-name: namespace? IDENTIFIER (DOT IDENTIFIER)*;
-
-// Namespace
-namespace: IDENTIFIER COLONCOLON (namespace)*;
+name: IDENTIFIER (DOT IDENTIFIER)*;
 
 // Flags 
 flag_list: IDENTIFIER (COMMA IDENTIFIER)*;
@@ -167,84 +164,3 @@ literal
     | STRING_LITERAL
     | NULL_LITERAL
     ;
-
-/* 
-// This is a more structured version of expression parsing, and I'm not sure if 
-// I'll need it yet, but I don't want to write it again if I do.
-
-expression: expression_assignment;
-expression_assignment
-    : expression_ternary
-    | expression_unary assignment_operator expression
-    ;
-expression_ternary
-    : expression_or
-    | <assoc = right> expression_or TERNARY expression COLON expression_ternary
-    ;
-expression_or: expression_and | expression_or OR expression_or;
-expression_and
-    : expression_bit_or
-    | expression_and AND expression_and
-    ;
-expression_bit_or
-    : expression_bit_xor
-    | expression_bit_or BIT_OR expression_bit_or
-    ;
-expression_bit_xor
-    : expression_bit_and
-    | expression_bit_xor BIT_XOR expression_bit_xor
-    ;
-expression_bit_and
-    : expression_equality
-    | expression_bit_and BIT_AND expression_bit_and
-    ;
-expression_equality
-    : expression_relational
-    | expression_equality EQUAL expression_equality
-    | expression_equality NOTEQUAL expression_equality
-    ;
-expression_relational
-    : expression_shift
-    | expression_relational LT expression_relational
-    | expression_relational GT expression_relational
-    | expression_relational LE expression_relational
-    | expression_relational GE expression_relational
-    ;
-expression_shift
-    : expression_additive
-    | expression_shift '<' '<' expression_shift
-    | expression_shift '>' '>' expression_shift
-    ;
-
-expression_additive
-    : expression_multiplicative
-    | expression_additive ADD expression_additive
-    | expression_additive SUB expression_additive
-    ;
-expression_multiplicative
-    : expression_unary
-    | expression_multiplicative MUL expression_multiplicative
-    | expression_multiplicative DIV expression_multiplicative
-    | expression_multiplicative MOD expression_multiplicative
-    ;
-expression_unary
-    : <assoc = right> (
-        SUB
-        | ADD
-        | NOT
-        | BIT_NOT
-        | DEC
-        | INC
-        | LPAREN type RPAREN
-    )* expression_postfix
-    ;
-expression_postfix
-    : expression_primary (
-        (INC | DEC)
-        | LBRACK expression RBRACK
-        | LPAREN expression_list? RPAREN
-        | LBRACE expression_list? RBRACE
-    )*
-    ;
-expression_primary: literal | name | LPAREN expression RPAREN;
-*/

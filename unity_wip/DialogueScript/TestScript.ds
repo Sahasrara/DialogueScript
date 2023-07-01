@@ -1,7 +1,26 @@
 <flag1,flag2<
-    TestNamespace::TestScriptHelpers.Best();
+    Best();
 >a1>
 
 <a1<
-    TestNamespace::TestScriptHelpers.Test();
+    Test();
 >>
+
+
+/*
+<done<
+    Test ass = GetAss();
+    ass.RunAssMethod();
+    Test.Speak(1);
+>>
+
+<<
+    WalkToWait("Voodoo Detective", "Moon Town");
+>at_moon_town>
+
+<at_moon_town<
+    DialoguePlay("Voodoo Detective", 123);
+    var flameSize = GetState("FlameSize").ToLong();
+    if (flameSize > 0L) { FireFlame(flameSize); }
+>>
+*/

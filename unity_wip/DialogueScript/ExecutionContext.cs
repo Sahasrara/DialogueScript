@@ -1,18 +1,20 @@
+using System;
 using System.Collections.Generic;
 
 namespace DialogueScript
 {
+    // TODO - this code is all garbage and needs to be written
     public class ExecutionContext
     {
         #region Private Variables
         private bool m_FlagSetAlarm;
-        private List<bool> m_Flags;
+        private bool[] m_Flags;
         #endregion
 
         #region Constructor
         public ExecutionContext()
         {
-            m_Flags = new();
+            m_Flags = new bool[Enum.GetValues(typeof(Flag)).Length];
             m_FlagSetAlarm = false;
         }
         #endregion
@@ -23,12 +25,12 @@ namespace DialogueScript
             Reset();
 
             // Flags
-            for (int i = 0; i < flagCount; i++) m_Flags.Add(false);
+            // for (int i = 0; i < flagCount; i++) m_Flags.Add(false);
+            // TODO
         }
 
         public void Reset()
         {
-            m_Flags.Clear();
             m_FlagSetAlarm = false;
         }
         #endregion
@@ -47,8 +49,8 @@ namespace DialogueScript
         #endregion
 
         #region Execution State - Flags
-        public void SetFlag(int flagId) => m_Flags[flagId] = true;
-        public bool IsFlagSet(int flagId) => m_Flags[flagId];
+        public void SetFlag(Flag flag) => m_Flags[(int)flag] = true;
+        public bool IsFlagSet(Flag flag) => m_Flags[(int)flag];
         #endregion
 
     }

@@ -4,6 +4,7 @@ using System.Text;
 using Antlr4.Runtime.Tree;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using UnityEngine;
 
 namespace DialogueScript
 {
@@ -11,49 +12,44 @@ namespace DialogueScript
     // - check if any flags are never triggered
     // - better transpiler error reporting (something better than the "bail" handler)
     // - make it so invocations without prefix default to a specific static class
-    public class DialogueScriptTranspilingTreeWalker
+    public class TranspilingTreeWalker
     {
         #region Constants
         private const string k_BlockNamePrefix = "Block";
+        private const string k_FunctionsClassName = "Functions"; // TODO - make this configurable
         #endregion
 
         #region Private Variables
         private int m_ScriptId;
-        private string m_Namespace;
         private string m_ClassName;
         private string m_ScriptName;
-        private bool m_ShouldCaptureTerminalNodesToBlockBuffer;
 
         // Accumulator - Script
         private StringBuilder m_AccumulatorScript;
 
-        private List<string> m_FlagList;
-        private Dictionary<string, int> m_FlagMap;
+        private FlagCache m_FlagCache;
         private List<ScheduledBlockBuilder> m_ScheduledBlocks;
         #endregion
 
-        public static string WalkScript(DialogueScriptParser.ScriptContext scriptTree, string namespaceString,
+        public static string WalkScript(DialogueScriptParser.ScriptContext scriptTree, FlagCache flagCache,
             string className, string scriptName, int scriptId)
         {
-            DialogueScriptTranspilingTreeWalker walker = new(namespaceString, className, scriptName, scriptId);
+            TranspilingTreeWalker walker = new(flagCache, className, scriptName, scriptId);
             walker.Walk(scriptTree);
             return walker.ToString();
         }
 
-        private DialogueScriptTranspilingTreeWalker(string namespaceString, string className, string scriptName, int scriptId)
+        private TranspilingTreeWalker(FlagCache flagCache,  string className, string scriptName,
+            int scriptId)
         {
             // Setup Accumulators
             m_AccumulatorScript = new();
 
-            // Setup Global Flag Containers
-            m_FlagMap = new();
-            m_FlagList = new();
+            // Set Flag Cache
+            m_FlagCache = flagCache;
 
             // Setup Schedule Block Lost
             m_ScheduledBlocks = new();
-
-            // Namespace
-            m_Namespace = namespaceString;
 
             // Class name
             m_ClassName = className;
@@ -82,7 +78,10 @@ namespace DialogueScript
                 case IErrorNode errorNode:
                     throw new Exception(errorNode.ToString());
                 case ITerminalNode terminalNode:
-                    m_ScheduledBlocks[^1].BlockCode.Append(terminalNode.Symbol.Text);
+                    if (terminalNode.Symbol.Type != DialogueScriptParser.Eof)
+                    {
+                        m_ScheduledBlocks[^1].Code.Append(terminalNode.Symbol.Text);
+                    }
                     break;
                 case IRuleNode ruleNode:
                     HandleRuleNode(ruleNode);
@@ -110,15 +109,12 @@ namespace DialogueScript
                 case DialogueScriptParser.Scheduled_block_closeContext scheduledBlockCloseContext:
                     HandleScheduledBlockClose(scheduledBlockCloseContext);
                     break;
-                case DialogueScriptParser.Expression_postfix_invokeContext:
-                    // TODO
-                    break;
-                case DialogueScriptParser.Expression_postfix_invoke_asyncContext:
-                    // TODO
-                    break;
-                case DialogueScriptParser.NamespaceContext namespaceContext:
-                    HandleNamespaceNode(namespaceContext);
-                    break;
+                // case DialogueScriptParser.Expression_postfix_invokeContext invokeContext:
+                //     HandleInvoke(invokeContext);
+                //     break;
+                // case DialogueScriptParser.Expression_postfix_invoke_asyncContext invokeAsyncContext:
+                //     HandleInvokeAsync(invokeAsyncContext);
+                //     break;
                 default:
                     HandleNodeDefault(ruleNode);
                     break;
@@ -129,15 +125,13 @@ namespace DialogueScript
         private void HandleScript(DialogueScriptParser.ScriptContext scriptContext)
         {
             // Write File Header
-            m_AccumulatorScript.AppendLine("// DO NOT EDIT MANUALLY");
-            m_AccumulatorScript.AppendLine("// Generated " + DateTime.Now.ToString("dddd, dd MMMM yyyy HH:mm:ss"));
-            m_AccumulatorScript.AppendLine("// DO NOT EDIT MANUALLY");
-            m_AccumulatorScript.AppendLine();
-            m_AccumulatorScript.AppendLine("using DialogueScript;");
-            m_AccumulatorScript.AppendLine($"namespace {m_Namespace}");
-            m_AccumulatorScript.AppendLine("{"); // namespace - open
+            m_AccumulatorScript.AppendLine(Helpers.GetGeneratedCodeHeader());
+            m_AccumulatorScript.AppendLine("namespace DialogueScript");
+            m_AccumulatorScript.AppendLine("{"); // namespace - OPEN
+            m_AccumulatorScript.AppendLine($"public static partial class {k_FunctionsClassName}");
+            m_AccumulatorScript.AppendLine("{"); // functions class - OPEN
             m_AccumulatorScript.AppendLine($"public struct {m_ClassName} : Script");
-            m_AccumulatorScript.AppendLine("{"); // script - open
+            m_AccumulatorScript.AppendLine("{"); // script - OPEN
 
             // Write Script Body
             int childCount = scriptContext.ChildCount;
@@ -145,16 +139,6 @@ namespace DialogueScript
             {
                 Walk(scriptContext.GetChild(i));
             }
-
-            // Comment Flags Names
-            m_AccumulatorScript.AppendLine("// Flag Map: ID - Name");
-            for (int i = 0; i < m_FlagList.Count; i++)
-            {
-                m_AccumulatorScript.AppendLine($"// {i} - {m_FlagList[i]}");
-            }
-
-            // FlagCount()
-            m_AccumulatorScript.AppendLine($"public static int FlagCount() => {m_FlagList.Count};");
 
             // ScriptId()
             m_AccumulatorScript.AppendLine($"public static int ScriptId() => {m_ScriptId};");
@@ -187,9 +171,9 @@ namespace DialogueScript
                 m_AccumulatorScript.Append($"!context.IsBlockExecuted({i})");
 
                 // Check if required flags are set
-                foreach (int entryFlagId in scheduledBlock.EntryFlags)
+                foreach (string entryFlag in scheduledBlock.EntryFlags)
                 {
-                    m_AccumulatorScript.Append($" && context.IsFlagSet({m_FlagMap[m_FlagList[entryFlagId]]})");
+                    m_AccumulatorScript.Append($" && context.IsFlagSet(Flag.{entryFlag})");
                 }
 
                 m_AccumulatorScript.AppendLine(")");
@@ -210,12 +194,13 @@ namespace DialogueScript
                 ScheduledBlockBuilder builder = m_ScheduledBlocks[i];
                 m_AccumulatorScript.AppendLine($"private void {builder.GetMethodName()}(ExecutionContext context)");
                 m_AccumulatorScript.AppendLine("{");
-                m_AccumulatorScript.Append(builder.BlockCode.ToString());
+                m_AccumulatorScript.Append(builder.Code.ToString());
                 m_AccumulatorScript.AppendLine("}");
             }
 
             // Close Contexts
             m_AccumulatorScript.AppendLine("}"); // script - CLOSE
+            m_AccumulatorScript.AppendLine("}"); // functions class - CLOSE
             m_AccumulatorScript.AppendLine("}"); // namespace - CLOSE
         }
         #endregion
@@ -259,33 +244,60 @@ namespace DialogueScript
                     string flag = identifier.GetText();
                     if (flag == ",") continue;
 
-                    // Add flag to global trackers
-                    int flagId = AddFlag(flag);
+                    // Add flag to flag cache
+                    m_FlagCache.AddFlag(flag);
 
                     // Add flag to scheduled block builder (idempotent)
-                    if (isEntry) builder.EntryFlags.Add(flagId);
-                    else builder.ExitFlags.Add(flagId);
+                    if (isEntry) builder.EntryFlags.Add(flag);
+                    else builder.ExitFlags.Add(flag);
                 }
             }
         }
         #endregion
 
-        #region Namespace Node
-        private void HandleNamespaceNode(DialogueScriptParser.NamespaceContext namespaceContext)
-        {
-            int childCount = namespaceContext.ChildCount;
-            for (int i = 0; i < childCount; ++i)
-            {
-                IParseTree child = namespaceContext.GetChild(i);
-                if (child is ITerminalNode terminalNode
-                    && terminalNode.Symbol.Type == DialogueScriptParser.COLONCOLON)
-                {
-                    // Replace '::' with '.' for C#
-                    m_ScheduledBlocks[^1].BlockCode.Append('.');
-                }
-                else Walk(child);
-            }
-        }
+        // #region Namespace Node
+        // private void HandleNamespaceNode(DialogueScriptParser.NamespaceContext namespaceContext)
+        // {
+        //     int childCount = namespaceContext.ChildCount;
+        //     for (int i = 0; i < childCount; ++i)
+        //     {
+        //         IParseTree child = namespaceContext.GetChild(i);
+        //         if (child is ITerminalNode terminalNode
+        //             && terminalNode.Symbol.Type == DialogueScriptParser.COLONCOLON)
+        //         {
+        //             // Replace '::' with '.' for C#
+        //             m_ScheduledBlocks[^1].BlockCode.Append('.');
+        //         }
+        //         else Walk(child);
+        //     }
+        // }
+        // #endregion
+
+        #region Invoke
+        // private void HandleInvoke(DialogueScriptParser.Expression_postfix_invokeContext invokeContext)
+        // {
+        //     int childCount = invokeContext.ChildCount;
+        //     for (int i = 0; i < childCount; ++i)
+        //     {
+        //         IParseTree child = invokeContext.GetChild(i);
+        //         m_ScheduledBlocks[^1].Code.Append($"{k_FunctionsClassName}.");
+        //
+        //         if (child is ITerminalNode terminalNode
+        //             && terminalNode.Symbol.Type == DialogueScriptParser.COLONCOLON)
+        //         {
+        //             // Replace '::' with '.' for C#
+        //             m_ScheduledBlocks[^1].Code.Append('.');
+        //         }
+        //         else Walk(child);
+        //     }
+        // }
+        #endregion
+
+        #region Invoke Async
+        // private void HandleInvokeAsync(DialogueScriptParser.Expression_postfix_invoke_asyncContext invokeAsyncContext)
+        // {
+        //
+        // }
         #endregion
 
         private void HandleNodeDefault(IRuleNode ruleNode)
@@ -297,29 +309,13 @@ namespace DialogueScript
             }
         }
 
-        #region Helpers - Flags
-        private int AddFlag(string flag)
-        {
-            // If flag is new, add it, otherwise return the previous flag ID
-            if (!m_FlagMap.TryGetValue(flag, out var flagId))
-            {
-                flagId = m_FlagList.Count;
-                m_FlagMap[flag] = flagId;
-                m_FlagList.Add(flag);
-            }
-            return flagId;
-        }
-        private string GetFlagString(int flagId) => m_FlagList[flagId];
-        private int GetFlagId(string flagString) => m_FlagMap[flagString];
-        #endregion
-
         #region Helpers - Scheduled Blocks
         private class ScheduledBlockBuilder
         {
             public int ScheduledBlockID { get; set; }
-            public HashSet<int> ExitFlags { get; private set; }
-            public HashSet<int> EntryFlags { get; private set; }
-            public StringBuilder BlockCode { get; private set; }
+            public HashSet<string> ExitFlags { get; }
+            public HashSet<string> EntryFlags { get; }
+            public StringBuilder Code { get; }
 
             public string GetMethodName() => $"Block{ScheduledBlockID}";
 
@@ -327,11 +323,9 @@ namespace DialogueScript
             {
                 ExitFlags = new();
                 EntryFlags = new();
-                BlockCode = new();
+                Code = new();
             }
         }
         #endregion
     }
 }
-
-

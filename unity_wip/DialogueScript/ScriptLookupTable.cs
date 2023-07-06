@@ -24,8 +24,7 @@ namespace DialogueScript
             s_ScriptNameToId = new();
 
             // Find all scripts
-            // TODO - only search specific namespace
-            Type scriptInterfaceType = typeof(Script);
+            Type scriptInterfaceType = typeof(IScript);
             Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
             foreach (Assembly assembly in assemblies)
             {
@@ -55,10 +54,10 @@ namespace DialogueScript
             return InvokeScriptNameGetter(scriptType);
         }
 
-        public static Script InstantiateScript(int scriptId)
+        public static IScript InstantiateScript(int scriptId)
         {
             Type scriptType = s_ScriptIdToType[scriptId];
-            return (Script) Activator.CreateInstance(scriptType);
+            return (IScript) Activator.CreateInstance(scriptType);
         }
         #endregion
 

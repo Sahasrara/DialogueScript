@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Antlr4.Runtime.Tree;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using UnityEngine;
 
 namespace DialogueScript
 {
@@ -130,7 +130,7 @@ namespace DialogueScript
             m_AccumulatorScript.AppendLine("{"); // namespace - OPEN
             m_AccumulatorScript.AppendLine($"public static partial class {k_FunctionsClassName}");
             m_AccumulatorScript.AppendLine("{"); // functions class - OPEN
-            m_AccumulatorScript.AppendLine($"public struct {m_ClassName} : Script");
+            m_AccumulatorScript.AppendLine($"public struct {m_ClassName} : {nameof(IScript)}");
             m_AccumulatorScript.AppendLine("{"); // script - OPEN
 
             // Write Script Body
@@ -145,6 +145,9 @@ namespace DialogueScript
 
             // ScriptName()
             m_AccumulatorScript.AppendLine($"public static string ScriptName() => \"{m_ScriptName}\";");
+
+            // BlockCount()
+            m_AccumulatorScript.AppendLine($"public int BlockCount() => {m_ScheduledBlocks.Count};");
 
             // Tick() - open
             m_AccumulatorScript.AppendLine("public void Tick(ExecutionContext context)");
@@ -178,12 +181,13 @@ namespace DialogueScript
 
                 m_AccumulatorScript.AppendLine(")");
                 m_AccumulatorScript.AppendLine("{");
+                // Execute Block
                 m_AccumulatorScript.AppendLine($"{k_BlockNamePrefix}{i}(context);");
                 m_AccumulatorScript.AppendLine("}");
             }
 
             // Tick() do-while loop - close
-            m_AccumulatorScript.AppendLine("} while(context.IsFlagSetAlarmTriggered());");
+            m_AccumulatorScript.AppendLine("} while(!context.IsExecutionComplete() && context.IsFlagSetAlarmTriggered());");
 
             // Tick() - close
             m_AccumulatorScript.AppendLine("}");
@@ -194,7 +198,21 @@ namespace DialogueScript
                 ScheduledBlockBuilder builder = m_ScheduledBlocks[i];
                 m_AccumulatorScript.AppendLine($"private void {builder.GetMethodName()}(ExecutionContext context)");
                 m_AccumulatorScript.AppendLine("{");
-                m_AccumulatorScript.Append(builder.Code.ToString());
+                m_AccumulatorScript.AppendLine(builder.Code.ToString());
+
+                // Mark scheduled block executed
+                m_AccumulatorScript.AppendLine("// Mark schedule block executed");
+                m_AccumulatorScript.AppendLine($"context.SetBlockExecuted({i});");
+
+                // Set exit flags if needed
+                if (builder.ExitFlags.Count > 0)
+                {
+                    m_AccumulatorScript.AppendLine("// Set exit flags");
+                    foreach (string exitFlag in builder.ExitFlags)
+                    {
+                        m_AccumulatorScript.AppendLine($"context.SetFlag(Flag.{exitFlag});");
+                    }
+                }
                 m_AccumulatorScript.AppendLine("}");
             }
 

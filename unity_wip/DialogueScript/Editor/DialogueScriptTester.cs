@@ -1,6 +1,5 @@
 using System.IO;
 using Antlr4.Runtime;
-using Antlr4.Runtime.Tree;
 using UnityEditor;
 using UnityEngine;
 
@@ -8,14 +7,13 @@ namespace DialogueScript.Editor
 {
     public class DialogueScriptTester
     {
+        private const int k_TestScriptId = 0;
+        private const string k_TestClassName = "TestClass";
+        private const string k_TestScriptName = "TestScript";
+
         [MenuItem("DialogueScript/Generate Test Script")]
         public static void GenerateTestScript()
         {
-            // Class and namespace name
-            string testClassName = "TestClass";
-            string testScriptName = "TestScript";
-            int testScriptId = 0;
-
             // Grab file paths
             string testDirectory = Path.Combine(Application.dataPath, "DialogueScript");
             string testFilePath = Path.Combine(testDirectory, "TestScript.ds");
@@ -27,8 +25,8 @@ namespace DialogueScript.Editor
             FlagCache flagCache = new(testFlagPath);
 
             // Generate script
-            GenerateScript(flagCache, testFilePath, testScriptPath, testClassName, testScriptName,
-                testScriptId);
+            GenerateScript(flagCache, testFilePath, testScriptPath, k_TestClassName, k_TestScriptName,
+                k_TestScriptId);
         }
 
         [MenuItem("DialogueScript/Execute Test Script")]
@@ -37,7 +35,18 @@ namespace DialogueScript.Editor
             // Initialize Lookup Table
             ScriptLookupTable.Initialize();
 
-            // TODO - Execute a test script
+            // Find Script
+            int scriptId = ScriptLookupTable.LookupScriptId(k_TestScriptName);
+            IScript script = ScriptLookupTable.InstantiateScript(scriptId);
+
+            // Create Execution Context
+            ExecutionContext context = new(script.BlockCount());
+
+            // Execute Script
+            while (!context.IsExecutionComplete())
+            {
+                script.Tick(context);
+            }
         }
 
         private static void GenerateScript(FlagCache flagCache, string dialogueScriptSourcePath,

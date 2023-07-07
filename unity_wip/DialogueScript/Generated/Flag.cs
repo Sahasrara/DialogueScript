@@ -1,5 +1,5 @@
 // DO NOT EDIT MANUALLY
-// Generated Wednesday, 05 July 2023 18:32:58
+// Generated Thursday, 06 July 2023 18:25:03
 // DO NOT EDIT MANUALLY
 
 namespace DialogueScript
@@ -10,6 +10,7 @@ namespace DialogueScript
         flag1,
         flag2,
         a1,
+        asyncDone,
 /* END FLAG LIST */
     }
 }

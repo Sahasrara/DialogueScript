@@ -4,8 +4,12 @@
 
 <a1<
     Test();
->>
+    TestAsync{};
+>asyncDone>
 
+<asyncDone<
+    Best();
+>>
 
 /*
 <done<

@@ -12,7 +12,7 @@ namespace DialogueScript
     {
         public static int ScriptId() => throw new Exception("Could not find ScriptId implementation");
         public static string ScriptName => throw new Exception("Could not find ScriptName implementation");
-        public int BlockCount();
+        public ExecutionContext CreateExecutionContext();
         public void Tick(ExecutionContext context);
     }
 }

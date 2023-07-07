@@ -1,5 +1,5 @@
 // DO NOT EDIT MANUALLY
-// Generated Wednesday, 05 July 2023 18:32:57
+// Generated Thursday, 06 July 2023 18:25:03
 // DO NOT EDIT MANUALLY
 namespace DialogueScript
 {
@@ -9,7 +9,16 @@ namespace DialogueScript
         {
             public static int ScriptId() => 0;
             public static string ScriptName() => "TestScript";
-            public int BlockCount() => 2;
+            public ExecutionContext CreateExecutionContext()
+            {
+                int blockCount = 3;
+                bool[][] asyncFunctionCompleteArray = new bool[blockCount][];
+                asyncFunctionCompleteArray[0] = new bool[0];
+                asyncFunctionCompleteArray[1] = new bool[1];
+                asyncFunctionCompleteArray[2] = new bool[0];
+                return new(blockCount, asyncFunctionCompleteArray);
+            }
+
             public void Tick(ExecutionContext context)
             {
                 do
@@ -27,6 +36,12 @@ namespace DialogueScript
                     {
                         Block1(context);
                     }
+
+                    // Scheduled Block - 2
+                    if (!context.IsBlockExecuted(2) && context.IsFlagSet(Flag.asyncDone))
+                    {
+                        Block2(context);
+                    }
                 }
                 while (!context.IsExecutionComplete() && context.IsFlagSetAlarmTriggered());
             }
@@ -43,8 +58,18 @@ namespace DialogueScript
             private void Block1(ExecutionContext context)
             {
                 Test();
+                TestAsync(context.CreateAsyncFunctionCompleteSignal(1, 0));
                 // Mark schedule block executed
                 context.SetBlockExecuted(1);
+                // Set exit flags
+                context.SetFlag(Flag.asyncDone);
+            }
+
+            private void Block2(ExecutionContext context)
+            {
+                Best();
+                // Mark schedule block executed
+                context.SetBlockExecuted(2);
             }
         }
     }

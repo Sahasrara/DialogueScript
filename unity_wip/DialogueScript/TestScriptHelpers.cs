@@ -13,5 +13,10 @@ namespace DialogueScript
         {
             Debug.Log("Test");
         }
+
+        static void TestAsync(ExecutionContext.AsyncFunctionCompleteSignal completeSignal)
+        {
+            completeSignal.SignalComplete();
+        }
     }
 }

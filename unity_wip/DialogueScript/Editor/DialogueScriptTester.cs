@@ -40,7 +40,7 @@ namespace DialogueScript.Editor
             IScript script = ScriptLookupTable.InstantiateScript(scriptId);
 
             // Create Execution Context
-            ExecutionContext context = new(script.BlockCount());
+            ExecutionContext context = script.CreateExecutionContext();
 
             // Execute Script
             while (!context.IsExecutionComplete())

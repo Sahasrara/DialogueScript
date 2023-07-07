@@ -112,9 +112,9 @@ namespace DialogueScript
                 // case DialogueScriptParser.Expression_postfix_invokeContext invokeContext:
                 //     HandleInvoke(invokeContext);
                 //     break;
-                // case DialogueScriptParser.Expression_postfix_invoke_asyncContext invokeAsyncContext:
-                //     HandleInvokeAsync(invokeAsyncContext);
-                //     break;
+                case DialogueScriptParser.Expression_postfix_invoke_asyncContext invokeAsyncContext:
+                    HandleInvokeAsync(invokeAsyncContext);
+                    break;
                 default:
                     HandleNodeDefault(ruleNode);
                     break;
@@ -146,8 +146,18 @@ namespace DialogueScript
             // ScriptName()
             m_AccumulatorScript.AppendLine($"public static string ScriptName() => \"{m_ScriptName}\";");
 
-            // BlockCount()
-            m_AccumulatorScript.AppendLine($"public int BlockCount() => {m_ScheduledBlocks.Count};");
+            // Create Execution Context Generator
+            m_AccumulatorScript.AppendLine("public ExecutionContext CreateExecutionContext()");
+            m_AccumulatorScript.AppendLine("{");
+            m_AccumulatorScript.AppendLine($"int blockCount = {m_ScheduledBlocks.Count};");
+            m_AccumulatorScript.AppendLine("bool[][] asyncFunctionCompleteArray = new bool[blockCount][];");
+            for (int i = 0; i < m_ScheduledBlocks.Count; i++)
+            {
+                ScheduledBlockBuilder scheduledBlock = m_ScheduledBlocks[i];
+                m_AccumulatorScript.AppendLine($"asyncFunctionCompleteArray[{i}] = new bool[{scheduledBlock.AsyncFunctionCount}];");
+            }
+            m_AccumulatorScript.AppendLine("return new(blockCount, asyncFunctionCompleteArray);");
+            m_AccumulatorScript.AppendLine("}");
 
             // Tick() - open
             m_AccumulatorScript.AppendLine("public void Tick(ExecutionContext context)");
@@ -312,10 +322,35 @@ namespace DialogueScript
         #endregion
 
         #region Invoke Async
-        // private void HandleInvokeAsync(DialogueScriptParser.Expression_postfix_invoke_asyncContext invokeAsyncContext)
-        // {
-        //
-        // }
+        private void HandleInvokeAsync(DialogueScriptParser.Expression_postfix_invoke_asyncContext invokeAsyncContext)
+        {
+            int argumentCount = invokeAsyncContext.expression_list() == null
+                ? 0
+                : invokeAsyncContext.expression_list().ChildCount;
+            int childCount = invokeAsyncContext.ChildCount;
+            for (int i = 0; i < childCount; i++)
+            {
+                // Add the async parameter after
+                IParseTree child = invokeAsyncContext.GetChild(i);
+                if (child is ITerminalNode lBraceNode && lBraceNode.Symbol.Type == DialogueScriptParser.LBRACE)
+                {
+                    ScheduledBlockBuilder builder = m_ScheduledBlocks[^1];
+
+                    // Add in AsyncFunctionSignalComplete as first parameter
+                    m_ScheduledBlocks[^1].Code.Append($"(context.CreateAsyncFunctionCompleteSignal({builder.ScheduledBlockID}, {builder.GetThenIncrementAsyncFunctionCount()})");
+                    if (argumentCount > 0)
+                    {
+                        m_ScheduledBlocks[^1].Code.Append(",");
+                    }
+                }
+                else if (child is ITerminalNode rBraceNode && rBraceNode.Symbol.Type == DialogueScriptParser.RBRACE)
+                {
+                    // Replace curly bracket with parenthesis
+                    m_ScheduledBlocks[^1].Code.Append(")");
+                }
+                else Walk(child);
+            }
+        }
         #endregion
 
         private void HandleNodeDefault(IRuleNode ruleNode)
@@ -330,12 +365,19 @@ namespace DialogueScript
         #region Helpers - Scheduled Blocks
         private class ScheduledBlockBuilder
         {
+            public int AsyncFunctionCount { get; private set; }
             public int ScheduledBlockID { get; set; }
             public HashSet<string> ExitFlags { get; }
             public HashSet<string> EntryFlags { get; }
             public StringBuilder Code { get; }
 
             public string GetMethodName() => $"Block{ScheduledBlockID}";
+            public int GetThenIncrementAsyncFunctionCount()
+            {
+                int count = AsyncFunctionCount;
+                AsyncFunctionCount++;
+                return count;
+            }
 
             public ScheduledBlockBuilder()
             {

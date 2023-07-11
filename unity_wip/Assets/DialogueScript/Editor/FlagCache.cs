@@ -8,6 +8,7 @@ namespace DialogueScript
         #region Constants
         private const string k_FlagListEnd = "/* END FLAG LIST */";
         private const string k_FlagListStart = "/* START FLAG LIST */";
+        private const string k_ReservedFlagCount = "RESERVED_FLAG_COUNT";
         #endregion
 
         #region Private Variables
@@ -37,7 +38,7 @@ namespace DialogueScript
         #region Cache Methods
         public void AddFlag(string flag)
         {
-            if (m_FlagSet.Contains(flag)) return;
+            if (m_FlagSet.Contains(flag) || flag == k_ReservedFlagCount) return;
             m_FlagSet.Add(flag);
             m_FlagList.Add(flag);
         }
@@ -59,6 +60,9 @@ namespace DialogueScript
                     writer.Write(m_FlagList[i]);
                     writer.Write(",\n");
                 }
+                writer.Write("        ");
+                writer.Write(k_ReservedFlagCount);
+                writer.Write(",\n");
                 writer.WriteLine(k_FlagListEnd);
                 writer.WriteLine("    }");
                 writer.WriteLine("}");

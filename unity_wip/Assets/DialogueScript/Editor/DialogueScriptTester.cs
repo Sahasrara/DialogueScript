@@ -15,10 +15,10 @@ namespace DialogueScript.Editor
         public static void GenerateTestScript()
         {
             // Grab file paths
-            string testDirectory = Path.Combine(Application.dataPath, "DialogueScript");
-            string testFilePath = Path.Combine(testDirectory, "TestScript.ds");
-            string testScriptPath = Path.Combine(testDirectory, "generated", "TestScript.cs");
-            string testFlagPath = Path.Combine(testDirectory, "generated", "Flag.cs");
+            string testDirectory = Path.Combine(Application.dataPath, "Dialogue");
+            string testFilePath = Path.Combine(testDirectory, "Scripts", "TestScript.ds");
+            string testScriptPath = Path.Combine(testDirectory, "Generated", "TestScript.cs");
+            string testFlagPath = Path.Combine(testDirectory, "Generated", "Flag.cs");
             if (!File.Exists(testFilePath)) Debug.LogError("Could not find test_script.ds");
 
             // Create flag cache

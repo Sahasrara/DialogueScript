@@ -1,5 +1,5 @@
 // DO NOT EDIT MANUALLY
-// Generated Thursday, 06 July 2023 18:25:03
+// Generated Monday, 10 July 2023 19:57:13
 // DO NOT EDIT MANUALLY
 
 namespace DialogueScript
@@ -7,10 +7,11 @@ namespace DialogueScript
     public enum Flag
     {
 /* START FLAG LIST */
-        flag1,
-        flag2,
         a1,
         asyncDone,
+        secondAsyncDone,
+        DoubleFlag,
+        RESERVED_FLAG_COUNT,
 /* END FLAG LIST */
     }
 }

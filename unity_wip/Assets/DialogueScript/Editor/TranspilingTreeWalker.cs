@@ -150,13 +150,28 @@ namespace DialogueScript
             m_AccumulatorScript.AppendLine("public ExecutionContext CreateExecutionContext()");
             m_AccumulatorScript.AppendLine("{");
             m_AccumulatorScript.AppendLine($"int blockCount = {m_ScheduledBlocks.Count};");
-            m_AccumulatorScript.AppendLine("bool[][] asyncFunctionCompleteArray = new bool[blockCount][];");
+            m_AccumulatorScript.AppendLine("ExecutionContext.BlockData[] blockData = new ExecutionContext.BlockData[blockCount];");
+            bool noAsync = true;
             for (int i = 0; i < m_ScheduledBlocks.Count; i++)
             {
                 ScheduledBlockBuilder scheduledBlock = m_ScheduledBlocks[i];
-                m_AccumulatorScript.AppendLine($"asyncFunctionCompleteArray[{i}] = new bool[{scheduledBlock.AsyncFunctionCount}];");
+                m_AccumulatorScript.AppendLine($"blockData[{i}] = new ExecutionContext.BlockData();");
+                m_AccumulatorScript.AppendLine($"blockData[{i}].AsyncFunctionCompleteArray = new bool[{scheduledBlock.AsyncFunctionCount}];");
+                m_AccumulatorScript.AppendLine($"blockData[{i}].TriggerBlockExitFlags = Block{i}ExitFlags;");
+                if (scheduledBlock.AsyncFunctionCount == 0)
+                {
+                    m_AccumulatorScript.AppendLine($"blockData[{i}].AsyncDone = true;");
+                }
+                else noAsync = false;
             }
-            m_AccumulatorScript.AppendLine("return new(blockCount, asyncFunctionCompleteArray);");
+            if (noAsync)
+            {
+                m_AccumulatorScript.AppendLine("return new(new bool[(int)Flag.RESERVED_FLAG_COUNT], blockData, false);");
+            }
+            else
+            {
+                m_AccumulatorScript.AppendLine("return new(new bool[(int)Flag.RESERVED_FLAG_COUNT], blockData, true);");
+            }
             m_AccumulatorScript.AppendLine("}");
 
             // Tick() - open
@@ -164,6 +179,7 @@ namespace DialogueScript
             m_AccumulatorScript.AppendLine("{");
 
             // Tick() do-while loop - open
+            m_AccumulatorScript.AppendLine("if (context.IsSynchronousCodeExecuted()) return;");
             m_AccumulatorScript.AppendLine("do {");
             m_AccumulatorScript.AppendLine("// Reset flag set alarm");
             m_AccumulatorScript.AppendLine("context.ResetFlagSetAlarm();");
@@ -186,7 +202,7 @@ namespace DialogueScript
                 // Check if required flags are set
                 foreach (string entryFlag in scheduledBlock.EntryFlags)
                 {
-                    m_AccumulatorScript.Append($" && context.IsFlagSet(Flag.{entryFlag})");
+                    m_AccumulatorScript.Append($" && context.IsFlagSet((int)Flag.{entryFlag})");
                 }
 
                 m_AccumulatorScript.AppendLine(")");
@@ -197,7 +213,7 @@ namespace DialogueScript
             }
 
             // Tick() do-while loop - close
-            m_AccumulatorScript.AppendLine("} while(!context.IsExecutionComplete() && context.IsFlagSetAlarmTriggered());");
+            m_AccumulatorScript.AppendLine("} while(!context.IsSynchronousCodeExecuted() && context.IsFlagSetAlarmTriggered());");
 
             // Tick() - close
             m_AccumulatorScript.AppendLine("}");
@@ -213,14 +229,16 @@ namespace DialogueScript
                 // Mark scheduled block executed
                 m_AccumulatorScript.AppendLine("// Mark schedule block executed");
                 m_AccumulatorScript.AppendLine($"context.SetBlockExecuted({i});");
+                m_AccumulatorScript.AppendLine("}");
 
-                // Set exit flags if needed
+                // Trigger Exit Flag Function
+                m_AccumulatorScript.AppendLine($"private void {builder.GetMethodName()}ExitFlags(ExecutionContext context)");
+                m_AccumulatorScript.AppendLine("{");
                 if (builder.ExitFlags.Count > 0)
                 {
-                    m_AccumulatorScript.AppendLine("// Set exit flags");
                     foreach (string exitFlag in builder.ExitFlags)
                     {
-                        m_AccumulatorScript.AppendLine($"context.SetFlag(Flag.{exitFlag});");
+                        m_AccumulatorScript.AppendLine($"context.SetFlag((int)Flag.{exitFlag});");
                     }
                 }
                 m_AccumulatorScript.AppendLine("}");

@@ -1,14 +1,23 @@
 <<
-    Best();
+    Log("first block");
 >a1>
 
 <a1<
-    Test();
+    Log("second block");
     TestAsync{};
 >asyncDone>
 
 <asyncDone<
-    Best();
+    Log("third block");
+    TestAsync{};
+>secondAsyncDone,DoubleFlag>
+
+<secondAsyncDone<
+    Log("fourth block");
+>>
+
+<DoubleFlag<
+    Log("fifth block");
 >>
 
 /*
